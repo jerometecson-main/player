@@ -8,6 +8,7 @@ const ALLOWED_REFERERS = [
   "https://api.zxcstream.xyz/",
   "https://embed.zxcstream.xyz/",
   "https://player.zxcstream.xyz/",
+  "https://cdn.zxcstream.xyz/",
   "https://www.zxcstream.xyz/",
   "https://meow-production-9394.up.railway.app/",
 ];
@@ -21,6 +22,7 @@ export const ALLOWED_ORIGINS = [
   "https://api.zxcstream.xyz",
   "https://embed.zxcstream.xyz",
   "https://player.zxcstream.xyz",
+  "https://cdn.zxcstream.xyz",
   "http://192.168.1.2:3000",
   "https://meow-production-9394.up.railway.app",
 ];

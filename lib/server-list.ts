@@ -2,18 +2,18 @@ import { ServerTypes } from "@/types/player-types";
 
 export const initialServers: ServerTypes[] = [
   {
+    name: "Main",
+    server: "main",
+    status: "queue",
+    desc: "Fixes Media Mismatch",
+  },
+  {
     name: "Icarus I",
     server: "icarus",
     status: "queue",
     desc: "Vast Collection",
   },
 
-  // {
-  //   name: "Atlas V2",
-  //   server: "atlas_v2",
-  //   status: "queue",
-  //   desc: "Fixes Media Mismatch",
-  // },
   {
     name: "Atlas II",
     server: "atlas",
