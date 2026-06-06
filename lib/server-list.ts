@@ -14,13 +14,7 @@ export const initialServers: ServerTypes[] = [
     desc: "Vast Collection",
   },
   {
-    name: "Atlas II",
-    server: "atlas_v2",
-    status: "queue",
-    desc: "4K Support & Multi Audio",
-  },
-  {
-    name: "Daedalus III",
+    name: "Daedalus II",
     server: "daedalus",
     status: "queue",
     desc: " Alternative",
@@ -32,7 +26,7 @@ export const initialServers: ServerTypes[] = [
   //   desc: " Alternative",
   // },
   {
-    name: "Orion IV",
+    name: "Orion III",
     server: "orion",
     status: "queue",
     desc: "Built-In Subtitle",
