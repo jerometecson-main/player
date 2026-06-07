@@ -31,6 +31,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const isProduction = process.env.NODE_ENV === "production";
   return (
     <html
       lang="en"
@@ -75,7 +76,7 @@ export default function RootLayout({
             {/* <SandboxGuard>{children}</SandboxGuard> */}
           </Provider>
         </ThemeProvider>
-        <DevToolGuard />
+        {isProduction && <DevToolGuard />}
       </body>
     </html>
   );
