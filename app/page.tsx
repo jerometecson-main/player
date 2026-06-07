@@ -243,9 +243,9 @@ export default function Home() {
               api.zxcstream.xyz
             </div>
           </Link>
-          <Link href={`https://player.zxcstream.xyz`} target="_blank">
+          <Link href={`https://zxcstream.xyz`} target="_blank">
             <div className="flex-1 text-center lg:text-xl text-base">
-              player.zxcstream.xyz
+              zxcstream.xyz
             </div>
           </Link>
 
