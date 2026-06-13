@@ -190,17 +190,21 @@ export async function GET(req: NextRequest) {
           { status: 404 },
         );
       }
+      console.log(items);
+      const n = (s: string) => s.toLowerCase().trim();
 
       const selectedItem =
         items.find(
           (i: any) =>
-            (i?.title || "").toLowerCase().includes(title.toLowerCase()) &&
+            i?.releaseDate?.startsWith(year) &&
+            n(i?.title || "") === n(title) &&
             !(i?.title || "").includes("["),
         ) ||
-        items.find((i: any) =>
-          (i?.title || "").toLowerCase().includes(title.toLowerCase()),
-        );
-
+        items.find(
+          (i: any) =>
+            i?.releaseDate?.startsWith(year) && !(i?.title || "").includes("["),
+        ) ||
+        items.find((i: any) => i?.releaseDate?.startsWith(year));
       if (!selectedItem) {
         logRequest(404, "unavailable");
         return NextResponse.json(
