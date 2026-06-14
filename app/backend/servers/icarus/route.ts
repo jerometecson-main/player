@@ -213,6 +213,8 @@ export async function GET(req: NextRequest) {
       // Detail — use the selected item's detailPath
       const detailRes = await fetchWithTimeout(
         `https://h5-api.aoneroom.com/wefeed-h5api-bff/detail?detailPath=${selectedItem.detailPath}`,
+
+        // https://h5-api.aoneroom.com/wefeed-h5api-bff/detail?detailPath=teach-you-a-lesson-tagalog-yD5Dt6HRpJ7
         {
           headers: {
             ...headers,
@@ -227,6 +229,21 @@ export async function GET(req: NextRequest) {
 
       dubs = info?.subject?.dubs || [];
 
+      if (dubs.length === 0) {
+        dubs = [
+          {
+            subjectId: rawSubjectId,
+            detailPath: selectedItem.detailPath,
+            original: true,
+            lanCode: "orig",
+            lanName: "Original Audio",
+            type: 0,
+            constructed: true,
+          },
+        ];
+      }
+
+      console.log(info);
       // Save to cache
       if (dubs.length > 0) {
         await supabase
@@ -243,6 +260,8 @@ export async function GET(req: NextRequest) {
       dubs.find((d: any) => d.original === true) ??
       dubs.find((d: any) => d.lanCode === "en") ??
       dubs[0];
+
+    console.log(original);
     if (!original) {
       logRequest(404, "no original dub entry");
       return NextResponse.json(
