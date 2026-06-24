@@ -256,7 +256,7 @@ export default function Home() {
           <AlertDialogHeader>
             <AlertDialogTitle>📢 Important Announcement</AlertDialogTitle>
 
-            <div className="md:text-base text-sm text-muted-foreground text-left space-y-3">
+            <div className="md:text-base text-sm text-muted-foreground text-left space-y-3 max-h-100 overflow-auto pr-2">
               <div>
                 To avoid confusion, please only use and follow the{" "}
                 <strong>zxcstream.xyz</strong> domain.
@@ -279,6 +279,46 @@ export default function Home() {
 
               <div>✅ No need to save or share temporary domains</div>
 
+              <div className="rounded-md border p-3 bg-muted/40 space-y-2 mt-5">
+                <div className="font-medium text-foreground">
+                  Stay Connected
+                </div>
+
+                <div>
+                  Follow and join our community for the latest updates,
+                  announcements, maintenance notices, and domain changes:
+                </div>
+
+                <div className="flex gap-3">
+                  <Link
+                    href="https://discord.gg/yv7wJV97Jd"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block hover:underline"
+                  >
+                    Discord
+                  </Link>
+                  -
+                  <Link
+                    href="https://t.me/+AZZmZ7-_SFsxM2M9"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block hover:underline"
+                  >
+                    Telegram
+                  </Link>
+                  -
+                  <Link
+                    href="https://www.facebook.com/profile.php?id=61567135169478"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block hover:underline"
+                  >
+                    Facebook
+                  </Link>
+                </div>
+              </div>
+
               <div>Thank you for your support and understanding.</div>
             </div>
           </AlertDialogHeader>
@@ -286,7 +326,7 @@ export default function Home() {
           <AlertDialogFooter>
             <AlertDialogAction
               onClick={() => setOpen(false)}
-              className="w-full"
+              className="w-full bg-blue-800! text-foreground! hover:bg-blue-700! cursor-pointer"
             >
               Got it
             </AlertDialogAction>
