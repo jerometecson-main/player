@@ -19,7 +19,7 @@ import Episodes from "../episodes";
 import { useRouter } from "next/navigation";
 import { DubTypes, QualityTrack } from "@/hooks/source";
 import Link from "next/link";
-import { Cloud, Server } from "lucide-react";
+import { Cloud, Layers2, Server } from "lucide-react";
 import { CloudIcon } from "@/components/icons/cloud";
 import { ServerIcon } from "@/components/icons/server";
 import { DownloadIcon } from "@/components/icons/download";
@@ -164,7 +164,7 @@ export default function MainControls({
           onClick={() => setShowServer((prev) => !prev)}
           className="cursor-pointer"
         >
-          <Server
+          <Layers2
             strokeWidth={3}
             className={cn(
               "lg:size-8 md:size-7 size-6.5  max-[340px]:size-5.5 ",
