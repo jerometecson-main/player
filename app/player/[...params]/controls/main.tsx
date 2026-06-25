@@ -19,10 +19,11 @@ import Episodes from "../episodes";
 import { useRouter } from "next/navigation";
 import { DubTypes, QualityTrack } from "@/hooks/source";
 import Link from "next/link";
-import { Cloud } from "lucide-react";
+import { Cloud, Server } from "lucide-react";
 import { CloudIcon } from "@/components/icons/cloud";
 import { ServerIcon } from "@/components/icons/server";
 import { DownloadIcon } from "@/components/icons/download";
+import { cn } from "@/lib/utils";
 export interface VideoControlsProps {
   state: VideoPlayerState;
   controls: VideoPlayerControls;
@@ -42,7 +43,7 @@ export interface VideoControlsProps {
   //
 
   mergeSubtitles: MediaOption[];
-  dubs: DubTypes[]
+  dubs: DubTypes[];
   //
   title: string;
   //
@@ -144,21 +145,34 @@ export default function MainControls({
       onPointerMove={lockTimer}
     >
       <div className="lg:px-4 px-2 py-3 flex justify-between items-center pointer-events-auto">
-        {back && (
+        {back ? (
           <button onClick={() => router.back()} className="cursor-pointer">
-            <ArrowLeftIcon className="lg:size-13 md:size-10 size-8  max-[340px]:size-5.5 text-muted-foreground" />
+            <ArrowLeftIcon className="lg:size-13 md:size-10 size-10  max-[340px]:size-5.5 text-muted-foreground" />
           </button>
+        ) : (
+          <div className="lg:size-13 md:size-10 size-10  max-[340px]:size-5.5"></div>
         )}
-        {/* <div className="text-center absolute -translate-x-1/2 left-1/2 lg:top-5 top-3">
+        <div className="md:hidden">
           <h1 className="lg:text-2xl md:text-xl font-semibold">{title}</h1>
-          <div className="flex gap-3 justify-center  text-muted-foreground lg:mt-1 font-medium lg:text-base text-sm">
-            <p>2024</p> |<p>Animation</p>|<p>PG</p>
-          </div>
-        </div> */}
-        <div></div>
+          <p className="md:text-base text-xs text-muted-foreground text-center">
+            {genre}
+          </p>
+        </div>
+        <button
+          onClick={() => setShowServer((prev) => !prev)}
+          className="cursor-pointer"
+        >
+          <Server
+            strokeWidth={3}
+            className={cn(
+              "lg:size-8 md:size-7 size-6.5  max-[340px]:size-5.5 ",
+              showServer ? "text-foreground" : "text-muted-foreground",
+            )}
+          />
+        </button>
       </div>
       <div className="w-full lg:px-4 px-2   max-[340px]:px-1 lg:py-6 py-3  max-[340px]:py-1.5  space-y-3  max-[340px]:space-y-1  ">
-        <div className="lg:p-4 p-2  max-[340px]:p-1  pointer-events-none">
+        <div className="lg:p-4 p-2  max-[340px]:p-1  pointer-events-none hidden md:block">
           <span className="flex lg:gap-3 gap-1.5  max-[340px]:gap-1 items-center">
             <div
               className="lg:w-1 w-0.5  lg:h-5 h-3  max-[340px]:h-2 rounded-full"
@@ -177,50 +191,56 @@ export default function MainControls({
           </div>
         </div>
         <div className="space-y-3  max-[340px]:space-y-1 pointer-events-auto ">
-          <div className="group  lg:h-4 h-2  max-[340px]:h-1 lg:px-3 px-2  max-[340px]:px-1 flex justify-center items-center ">
-            <div
-              className="relative w-full"
-              ref={sliderRef}
-              onMouseMove={handleSliderHover}
-              onMouseLeave={clearHover}
-            >
-              {/* Buffered bar */}
-              <div className="absolute inset-0 rounded pointer-events-none">
-                <div
-                  className="h-full bg-muted-foreground/50 rounded"
-                  style={{
-                    width: state.duration
-                      ? `${(state.buffered / state.duration) * 100}%`
-                      : "0%",
-                  }}
+          <div className="lg:px-3 px-2 space-y-2">
+            <div className="group  lg:h-4 h-2  max-[340px]:h-1   max-[340px]:px-1 flex justify-center items-center ">
+              <div
+                className="relative w-full"
+                ref={sliderRef}
+                onMouseMove={handleSliderHover}
+                onMouseLeave={clearHover}
+              >
+                {/* Buffered bar */}
+                <div className="absolute inset-0 rounded pointer-events-none">
+                  <div
+                    className="h-full bg-muted-foreground/50 rounded"
+                    style={{
+                      width: state.duration
+                        ? `${(state.buffered / state.duration) * 100}%`
+                        : "0%",
+                    }}
+                  />
+                </div>
+
+                {hoverTime !== null && (
+                  <div
+                    className="absolute -top-8 px-2 py-1  text-sm rounded bg-background/70 backdrop-blur-2xl text-foreground pointer-events-none z-40"
+                    style={{
+                      left: hoverX,
+                      transform: "translateX(-50%)",
+                    }}
+                  >
+                    {formatTime(hoverTime)}
+                  </div>
+                )}
+                <Slider
+                  value={[state.currentTime]}
+                  max={state.duration || 1}
+                  step={0.1}
+                  onValueChange={(value) => controls.handleSeekChange(value)}
+                  onValueCommit={(value) => controls.handleSeekCommit(value)}
+                  className="relative z-10"
+                  // disabled={!state.canPlay}
+                  color={color}
                 />
               </div>
-
-              {hoverTime !== null && (
-                <div
-                  className="absolute -top-8 px-2 py-1  text-sm rounded bg-background/70 backdrop-blur-2xl text-foreground pointer-events-none z-40"
-                  style={{
-                    left: hoverX,
-                    transform: "translateX(-50%)",
-                  }}
-                >
-                  {formatTime(hoverTime)}
-                </div>
-              )}
-              <Slider
-                value={[state.currentTime]}
-                max={state.duration || 1}
-                step={0.1}
-                onValueChange={(value) => controls.handleSeekChange(value)}
-                onValueCommit={(value) => controls.handleSeekCommit(value)}
-                className="relative z-10"
-                // disabled={!state.canPlay}
-                color={color}
-              />
+            </div>
+            <div className="md:hidden flex justify-between text-sm">
+              <span>{formatTime(state.currentTime)}</span>
+              <span>{formatTime(state.duration)}</span>
             </div>
           </div>
-          <div className="flex justify-between items-center w-full  ">
-            <div className="flex items-center lg:gap-3 gap-2  max-[340px]:gap-1.5">
+          <div className="flex md:justify-between justify-center items-center w-full  lg:gap-3 gap-6 ">
+            <div className="flex items-center lg:gap-3 gap-6  max-[340px]:gap-1.5">
               <button
                 onClick={controls.togglePlay}
                 // disabled={!state.canPlay}
@@ -266,11 +286,11 @@ export default function MainControls({
                   max={1}
                   step={0.02}
                   onValueChange={([v]) => controls.setVolume(v)}
-                  className=" w-0 group-hover:w-24 transition-[width] duration-200 ease-in-out"
+                  className=" w-0 group-hover:w-24 transition-[width] duration-200 ease-in-out hidden md:block"
                   color={color}
                 />
               </div>
-              <div className="flex lg:gap-2 gap-1 items-center lg:ml-2 lg:text-base text-sm  max-[340px]:text-xs">
+              <div className="md:flex hidden lg:gap-2 gap-1 items-center lg:ml-2 lg:text-base text-sm  max-[340px]:text-xs">
                 <span>{formatTime(state.currentTime)}</span>/
                 <span>{formatTime(state.duration)}</span>
               </div>
@@ -285,7 +305,7 @@ export default function MainControls({
               )}
             </div>
 
-            <div className="flex items-center lg:gap-4 gap-2  max-[340px]:gap-1.5">
+            <div className="flex items-center lg:gap-4 gap-6  max-[340px]:gap-1.5">
               <Settings
                 mergeSubtitles={mergeSubtitles}
                 quality={quality}

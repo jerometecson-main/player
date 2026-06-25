@@ -72,7 +72,7 @@ function opts(...values: string[]): SettingsOption[] {
 
 export const groups: SettingsGroup[] = [
   {
-    label: "Video & Audio",
+    label: "Sources",
     items: [
       {
         label: "Quality",
@@ -103,6 +103,11 @@ export const groups: SettingsGroup[] = [
         options: [],
         dynamicKey: "downloads",
       },
+    ],
+  },
+  {
+    label: "Video & Audio",
+    items: [
       {
         label: "Aspect Ratio",
         value: "16:9",

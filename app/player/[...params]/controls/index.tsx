@@ -216,7 +216,7 @@ export default function Settings({
         </Button>
 
         <button className="text-white/80 hover:text-white cursor-pointer lg:hidden block">
-          <SettingsIcon className="lg:size-13 md:size-9 size-7  max-[340px]:size-5" />
+          <SettingsIcon className="lg:size-13 md:size-9 size-6.5  max-[340px]:size-5" />
         </button>
       </motion.span>
 
@@ -235,7 +235,7 @@ export default function Settings({
             />
 
             <motion.div
-              className="absolute lg:right-0 -right-10 bottom-full lg:mb-3 z-20 lg:w-xs w-3xs bg-neutral-950/80 backdrop-blur-lg rounded-md shadow-xl overflow-hidden"
+              className="absolute lg:right-0 right-1/2 translate-x-1/2 lg:translate-x-0 bottom-full lg:mb-3 z-20 lg:w-xs w-3xs bg-neutral-950/80 backdrop-blur-lg rounded-md shadow-xl overflow-hidden"
               initial={{ opacity: 0, scale: 0.95, y: -6 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -6 }}
@@ -272,7 +272,7 @@ export default function Settings({
                       </p>
                     </div>
 
-                    <ScrollArea className="lg:max-h-[60vh] max-h-[40vh]  max-[340px]:max-h-[70vh] lg:pl-2 pl-1 lg:pr-3 pr-1.5">
+                    <ScrollArea className="lg:max-h-[60vh] max-h-[60vh]  max-[340px]:max-h-[70vh] lg:pl-2 pl-1 lg:pr-3 pr-1.5">
                       <div className="space-y-1 pt-1 pb-3">
                         {resolvedGroups.map(({ label, items }, i) => (
                           <div key={label}>

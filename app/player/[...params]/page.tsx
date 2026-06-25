@@ -44,7 +44,7 @@ export default function Player() {
   const tmdbId = String(params?.[1]);
   const season = Number(params?.[2]) || 1;
   const episode = Number(params?.[3]) || 1;
-  const [showServer, setShowServer] = useState(false);
+  const [showServer, setShowServer] = useState(true);
   const defaultServerIndex = Number(searchParams.get("server")) || 0;
   const domain = searchParams.get("domainAd") || "zxcstream.icu";
   const color = searchParams.get("color") || "dc2626";
@@ -173,12 +173,7 @@ export default function Player() {
     poster,
     backdrop,
   ]);
-  console.log("🔑 queryKey dub:", {
-    dub: dub,
-    type: type,
-    dubLang: dubLang,
-    dubType: dubType,
-  });
+
   // ─── Source ──────────────────────────────────────────────────────────────────
   const {
     data: source,
@@ -233,9 +228,9 @@ export default function Player() {
       load,
       handleServerFail,
     });
-
+  const timer = isMobile ? 3000 : 5000;
   const { isVisible, resetTimer, setIsVisible, lockTimer } =
-    useHiddenOverlay(5000);
+    useHiddenOverlay(timer);
 
   // ─── Next Episode ────────────────────────────────────────────────────────────
   const allSeason = metadata?.seasons?.length ?? 0;
@@ -390,6 +385,12 @@ export default function Player() {
 
   // ─── Interactions ─────────────────────────────────────────────────────────────
   useKeyboardControls({ controls, setDoubleTapSide });
+
+  useEffect(() => {
+    if (isMobile && state.canPlay) {
+      setShowServer(false);
+    }
+  }, [isMobile, state.canPlay]);
 
   const handleDoubleTap = useDoubleTap(
     (e) => {
@@ -616,7 +617,7 @@ export default function Player() {
 
       {/* Server picker */}
       <AnimatePresence>
-        {(isVisible || !state.canPlay) && (
+        {(isVisible || !state.canPlay) && showServer && (
           <LyricsServerPicker
             servers={servers}
             playingIndex={playingIndex}
