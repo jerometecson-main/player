@@ -185,9 +185,14 @@ const supabase = createClient(
 );
 
 const SCREENIFY = "https://www.screenify.fun";
-
+//https://daedalus.test35-f46.workers.dev/ https://daedalus.test34-2ea.workers.dev/ https://daedalus.test36-59e.workers.dev/
+//https://daedalus.test37-93b.workers.dev/
 const DAEDALUS_WORKERS = [
+  "test35-f46",
+  "test34-2ea",
+  "test36-59e",
   "test31-5f3",
+  "test37-93b",
   "test32-dc9",
   "test33-4ce",
   "test30-997",
