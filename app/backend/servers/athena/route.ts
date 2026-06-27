@@ -191,7 +191,16 @@ const SCREENIFY = "https://www.screenify.fun";
 //https://daedalus.test38-eab.workers.dev/ https://daedalus.test41-2c1.workers.dev/
 //https://daedalus.test45-b77.workers.dev/ https://daedalus.test44-255.workers.dev/  https://daedalus.test43-cbe.workers.dev/
 
+//https://daedalus.test48-104.workers.dev/ https://daedalus.test47-0f7.workers.dev/ https://daedalus.test49-3b0.workers.dev/
+//https://daedalus.test50-6c3.workers.dev/ https://daedalus.test52-b2c.workers.dev/ https://daedalus.test51-8b1.workers.dev/ https://daedalus.test46-96a.workers.dev/
 const DAEDALUS_WORKERS = [
+  "test52-b2c",
+  "test51-8b1",
+  "test50-6c3",
+  "test49-3b0",
+  "test48-104",
+  "test47-0f7",
+  "test46-96a",
   "test45-b77",
   "test44-255",
   "test42-947",
