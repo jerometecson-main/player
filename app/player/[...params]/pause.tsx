@@ -36,7 +36,7 @@ export default function Pause({
             </h3>
             <h1
               className={cn(
-                "text-[clamp(1.8rem,2.5vw,2.5rem)] landscape:text-base",
+                "lg:text-[clamp(1.8rem,2.5vw,2.5rem)] md:text-3xl text-lg landscape:text-base",
                 // "text-2xl md:text-3xl lg:text-5xl landscape:text-base",
                 "font-bold text-white",
                 "mt-1 landscape:mt-0",
