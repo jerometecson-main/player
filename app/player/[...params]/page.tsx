@@ -558,6 +558,23 @@ export default function Player() {
             //   "message:",
             //   error?.message,
             // );
+            if (
+              fetchServer.server === "icarus" &&
+              error?.code === MediaError.MEDIA_ERR_NETWORK
+            ) {
+              fetch("/backend_/servers/icarus/report_error", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  tmdbId,
+                  mediaType: media_type,
+                  season: media_type === "tv" ? season : "",
+                  episode: media_type === "tv" ? episode : "",
+                  dub: dub || dubLang || "orig",
+                  type: Number(dub ? type : dubType) || 0,
+                }),
+              });
+            }
           }}
           autoPlay={auto_play && autoplay === "on"}
           muted={auto_play && autoplay === "on"}
