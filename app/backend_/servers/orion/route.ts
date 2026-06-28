@@ -320,7 +320,12 @@ const HOLLY_WORKERS = [
 //https://holly-3.test92-0aa.workers.dev/ https://holly-3.test90-187.workers.dev/ https://holly-3.test89-84b.workers.dev/ https://holly-3.test91-055.workers.dev/
 
 //https://holly-3.test96-27b.workers.dev/  https://holly-3.test93-602.workers.dev/ https://holly-3.test94-fa3.workers.dev/ https://holly-3.test95-7d8.workers.dev/
+//https://holly-3.test99-a46.workers.dev/ https://holly-3.test98-a64.workers.dev/ https://holly-3.test97-f4b.workers.dev/ https://holly-3.test100-1ff.workers.dev/
 const HOLLY_PROXIES = [
+  "test100-1ff",
+  "test97-f4b",
+  "test98-a64",
+  "test99-a46",
   "test95-7d8",
   "test94-fa3",
   "test93-602",
