@@ -222,7 +222,7 @@ export default function Player() {
   // console.log("server index:", serverIndex, " player src=", playerSrc);
 
   const srcType = source?.links?.[Number(isAuto)]?.type ?? "";
-  console.log(isAuto, playerSrc, srcType);
+  // console.log(isAuto, playerSrc, srcType);
   const { videoRef, containerRef, state, controls, quality, audioTracks } =
     useVideoPlayer({
       playerSrc,
