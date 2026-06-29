@@ -340,7 +340,7 @@ export async function GET(req: NextRequest) {
 
     const dlQuery = supabase
       .from("moviebox_downloads_cache")
-      .select("downloads, subtitles, play_count")
+      .select("downloads, subtitles")
       .eq("tmdb_id", tmdbId)
       .eq("media_type", mediaType)
       .eq("dub", activeDubLang)
@@ -358,16 +358,6 @@ export async function GET(req: NextRequest) {
       console.log(`[ICARUS] downloads cache hit`);
       sortedDownloads = cachedDownloads.downloads ?? [];
       subtitles = cachedDownloads.subtitles ?? [];
-
-      await supabase
-        .from("moviebox_downloads_cache")
-        .update({ play_count: (cachedDownloads.play_count ?? 0) + 1 })
-        .eq("tmdb_id", tmdbId)
-        .eq("media_type", mediaType)
-        .eq("season", season ?? "")
-        .eq("episode", episode ?? "")
-        .eq("dub", activeDubLang)
-        .eq("type", activeDubType);
     } else {
       const params = new URLSearchParams({ subjectId, detailPath });
       if (mediaType === "tv") {
@@ -523,7 +513,7 @@ export async function GET(req: NextRequest) {
           type: activeDubType,
           downloads: sortedDownloads,
           subtitles,
-          play_count: 1,
+          play_count: 0,
           expires_at: new Date(Date.now() + 1000 * 60 * 60 * 45).toISOString(),
           refreshed_at: new Date().toISOString(),
         },

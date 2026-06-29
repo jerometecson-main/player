@@ -60,6 +60,8 @@ export default function Player() {
   const enableLoadProgress = searchParams.get("load_progress") !== "false"; // default true
   const load = Number(searchParams.get("load")) || undefined; // default undefined
   const dubLangApplied = useRef(false);
+  const playCountCalled = useRef(false);
+  const errorReportCalled = useRef(false);
   // ─── Local State ─────────────────────────────────────────────────────────────
   const isMobile = useIsMobile();
   const [doubleTapSide, setDoubleTapSide] = useState<"left" | "right" | null>(
@@ -307,6 +309,29 @@ export default function Player() {
     const timer = setTimeout(() => setShowFallbackBanner(false), 5000);
     return () => clearTimeout(timer);
   }, [source?.fallback, state.canPlay]);
+
+  useEffect(() => {
+    if (!state.canPlay) return;
+    if (fetchServer.server !== "icarus") return;
+    if (playCountCalled.current) return;
+    if (!source?.active) return;
+
+    playCountCalled.current = true;
+
+    fetch("/backend_/servers/icarus/report_play", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        tmdbId,
+        mediaType: media_type,
+        season: media_type === "tv" ? season : "",
+        episode: media_type === "tv" ? episode : "",
+        dub: source.active.langCode,
+        type: source.active.langType,
+      }),
+    });
+  }, [state.canPlay, source?.active]);
+
   // useEffect(() => {
   //   dubLangApplied.current = false;
   //    if (!source?.dubs?.[0]) return;
@@ -551,14 +576,8 @@ export default function Player() {
           onCanPlayThrough={handleCanPlay}
           onError={(e) => {
             handleServerFail();
-            // const error = e.currentTarget.error;
-            // console.log(
-            //   "Video error code:",
-            //   error?.code,
-            //   "message:",
-            //   error?.message,
-            // );
-            if (fetchServer.server === "icarus") {
+            if (fetchServer.server === "icarus" && !errorReportCalled.current) {
+              errorReportCalled.current = true;
               fetch("/backend_/servers/icarus/report_error", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
