@@ -493,6 +493,9 @@ export async function GET(req: NextRequest) {
     }
 
     const proxies = [
+      "https://icarus.test154-123.workers.dev/",
+      "https://icarus.test156-123.workers.dev/",
+      "https://icarus.test157-123.workers.dev/",
       "https://icarus.test153-224.workers.dev/",
       "https://icarus.test152-5d8.workers.dev/",
       "https://icarus.test151-009.workers.dev/",
