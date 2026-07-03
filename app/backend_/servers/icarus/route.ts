@@ -494,16 +494,17 @@ export async function GET(req: NextRequest) {
     const proxies = [
       // "https://icarus.test169-123.workers.dev/", //
 
-      "https://icarus.test168-123.workers.dev/",
-      "https://icarus.test167-123.workers.dev/",
-      "https://icarus.test166-123.workers.dev/",
-      "https://icarus.test165-123.workers.dev/",
-      "https://icarus.test164-123.workers.dev/",
-      "https://icarus.test163-123.workers.dev/",
-      "https://icarus.test162-123.workers.dev/",
-      "https://berkas.test161-123.workers.dev/",
-      "https://berkas.test160-123.workers.dev/",
+      // "https://icarus.test168-123.workers.dev/",
+      // "https://icarus.test167-123.workers.dev/",
+      // "https://icarus.test166-123.workers.dev/",
+      // "https://icarus.test165-123.workers.dev/",
+      // "https://icarus.test164-123.workers.dev/",
+      // "https://icarus.test163-123.workers.dev/",
+      // "https://icarus.test162-123.workers.dev/",
+      // "https://berkas.test161-123.workers.dev/",
+      // "https://berkas.test160-123.workers.dev/",
       "https://icarus.test155-123.workers.dev/",
+
       // "https://berkas.test158-123.workers.dev/", //
       // "https://berkas.test159-123.workers.dev/", //
 
