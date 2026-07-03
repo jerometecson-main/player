@@ -4,7 +4,7 @@ import { validateBackendToken } from "@/lib/validate-token";
 import { isValidReferer } from "@/lib/allowed-referers";
 import { createClient } from "@supabase/supabase-js";
 import { FIELD_MAP } from "@/lib/token";
-
+import { encryptUrl } from "@/lib/encryptor";
 const supabase = createClient(
   process.env.SUPABASE_URL_MOVIEBOX!,
   process.env.SUPABASE_SERVICE_ROLE_KEY_MOVIEBOX!,
@@ -92,8 +92,9 @@ export async function getWorkingProxy(url: string, proxies: string[]) {
 
   for (const proxy of shuffledProxies) {
     try {
+      const encrypted = await encryptUrl(url);
       const res = await fetchWithTimeout(
-        `${proxy}?url=${encodeURIComponent(url)}`,
+        `${proxy}?data=${encodeURIComponent(encrypted)}`,
         { method: "HEAD", headers: { Range: "bytes=0-1" } },
         3000,
       );
@@ -101,11 +102,9 @@ export async function getWorkingProxy(url: string, proxies: string[]) {
         await blacklistProxy(proxy);
         continue;
       }
-      if (res.ok || res.status === 206) {
-        // console.log(`[PROXY] ✓ ${proxy} | ${res.status}`);
+      if (res.ok) {
         return proxy;
       }
-      // console.log(`[PROXY] ✗ ${proxy} | ${res.status}`);
     } catch (e: any) {
       // console.log(`[PROXY] ✗ ${proxy} | ${e?.message}`);
     }
@@ -493,49 +492,52 @@ export async function GET(req: NextRequest) {
     }
     //Test155@zxcstream.xyz's Account
     const proxies = [
-      "https://icarus.test169-123.workers.dev/", //
-      "https://icarus.test167-123.workers.dev/", //
-      "https://icarus.test166-123.workers.dev/", //
-      "https://icarus.test168-123.workers.dev/", //
-      "https://icarus.test162-123.workers.dev/", //
-      "https://icarus.test163-123.workers.dev/", //
-      "https://icarus.test165-123.workers.dev/", //
-      "https://icarus.test164-123.workers.dev/", //
-      "https://berkas.test158-123.workers.dev/", //
-      "https://berkas.test159-123.workers.dev/", //
-      "https://berkas.test160-123.workers.dev/",
-      "https://berkas.test161-123.workers.dev/",
-      "https://icarus.test154-123.workers.dev/",
-      "https://icarus.test156-123.workers.dev/",
-      "https://icarus.test157-123.workers.dev/",
-      "https://icarus.test153-224.workers.dev/",
-      "https://icarus.test152-5d8.workers.dev/",
-      "https://icarus.test151-009.workers.dev/",
-      "https://icarus.test150-e8d.workers.dev/",
+      // "https://icarus.test169-123.workers.dev/", //
 
-      "https://proxy.zxcprime359-test1.workers.dev/",
-      "https://proxy.orbitprime27.workers.dev/",
-      "https://proxy.silverlantern64.workers.dev/",
-      "https://proxy.zxcprime380.workers.dev/",
-      "https://orange-tooth-0e36.zxcprime369.workers.dev/",
-      "https://silent-glitter-744f.zxcprime365.workers.dev/",
-      "https://nameless-feather-4fca.zxcprime364.workers.dev/",
-      "https://proxy.test4-eb0.workers.dev/",
-      "https://proxy.test3-ed1.workers.dev/",
-      "https://proxy.test2-425.workers.dev/",
-      "https://proxy.test1-845.workers.dev/",
-      "https://proxy.zxcprime3.workers.dev/",
-      "https://proxy.zxcprime2.workers.dev/",
-      "https://orange-poetry-e481.jindaedalus2.workers.dev/",
-      "https://proxy.primezxc9.workers.dev/",
-      "https://sweet-dust-bdb3.vetenabejar.workers.dev/",
-      "https://long-frog-ec4e.coupdegrace21799.workers.dev/",
-      "https://damp-bonus-5625.mosangfour.workers.dev/",
-      "https://orange-paper-a80d.j61202287.workers.dev/",
-      "https://still-butterfly-9b3e.zxcprime360.workers.dev/",
-      "https://empty-pond-805b.zxcprime363.workers.dev/",
-      "https://late-snowflake-5076.zxcprime362.workers.dev/",
-      "https://weathered-frost-60b0.zxcprime361.workers.dev/",
+      "https://icarus.test168-123.workers.dev/",
+      "https://icarus.test167-123.workers.dev/",
+      "https://icarus.test166-123.workers.dev/",
+      "https://icarus.test165-123.workers.dev/",
+      "https://icarus.test164-123.workers.dev/",
+      "https://icarus.test163-123.workers.dev/",
+      "https://icarus.test162-123.workers.dev/",
+      "https://berkas.test161-123.workers.dev/",
+      "https://berkas.test160-123.workers.dev/",
+      "https://icarus.test155-123.workers.dev/",
+      // "https://berkas.test158-123.workers.dev/", //
+      // "https://berkas.test159-123.workers.dev/", //
+
+      // "https://icarus.test154-123.workers.dev/",
+      // "https://icarus.test156-123.workers.dev/",
+      // "https://icarus.test157-123.workers.dev/",
+      // "https://icarus.test153-224.workers.dev/",
+      // "https://icarus.test152-5d8.workers.dev/",
+      // "https://icarus.test151-009.workers.dev/",
+      // "https://icarus.test150-e8d.workers.dev/",
+
+      // "https://proxy.zxcprime359-test1.workers.dev/",
+      // "https://proxy.orbitprime27.workers.dev/",
+      // "https://proxy.silverlantern64.workers.dev/",
+      // "https://proxy.zxcprime380.workers.dev/",
+      // "https://orange-tooth-0e36.zxcprime369.workers.dev/",
+      // "https://silent-glitter-744f.zxcprime365.workers.dev/",
+      // "https://nameless-feather-4fca.zxcprime364.workers.dev/",
+      // "https://proxy.test4-eb0.workers.dev/",
+      // "https://proxy.test3-ed1.workers.dev/",
+      // "https://proxy.test2-425.workers.dev/",
+      // "https://proxy.test1-845.workers.dev/",
+      // "https://proxy.zxcprime3.workers.dev/",
+      // "https://proxy.zxcprime2.workers.dev/",
+      // "https://orange-poetry-e481.jindaedalus2.workers.dev/",
+      // "https://proxy.primezxc9.workers.dev/",
+      // "https://sweet-dust-bdb3.vetenabejar.workers.dev/",
+      // "https://long-frog-ec4e.coupdegrace21799.workers.dev/",
+      // "https://damp-bonus-5625.mosangfour.workers.dev/",
+      // "https://orange-paper-a80d.j61202287.workers.dev/",
+      // "https://still-butterfly-9b3e.zxcprime360.workers.dev/",
+      // "https://empty-pond-805b.zxcprime363.workers.dev/",
+      // "https://late-snowflake-5076.zxcprime362.workers.dev/",
+      // "https://weathered-frost-60b0.zxcprime361.workers.dev/",
     ];
 
     const workingProxy = await getWorkingProxy(sortedDownloads[0].url, proxies);
@@ -569,13 +571,18 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const links = sortedDownloads.map((d: any) => ({
-      resolution: d.resolution,
-      format: d.format,
-      size: d.size,
-      type: d.url.includes(".m3u8") ? "hls" : "mp4",
-      link: `${workingProxy}?url=${encodeURIComponent(d.url)}`,
-    }));
+    const links = await Promise.all(
+      sortedDownloads.map(async (d: any) => {
+        const encrypted = await encryptUrl(d.url);
+        return {
+          resolution: d.resolution,
+          format: d.format,
+          size: d.size,
+          type: d.url.includes(".m3u8") ? "hls" : "mp4",
+          link: `${workingProxy}?data=${encodeURIComponent(encrypted)}`,
+        };
+      }),
+    );
 
     const activeDub =
       dubs.find((d: any) => d.lanCode === activeDubLang) ?? dubs[0];

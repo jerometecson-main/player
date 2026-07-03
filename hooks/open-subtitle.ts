@@ -2,9 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 export interface MediaOption {
-
   id: string;
-  display: string; 
+  display: string;
   file: string;
 }
 
@@ -63,5 +62,7 @@ export function useOpenSubtitle({
     enabled: !!imdbId,
     refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 5,
+    retry: false,
+    refetchOnReconnect: false,
   });
 }

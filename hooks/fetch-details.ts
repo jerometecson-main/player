@@ -25,7 +25,9 @@ export function useTmdbDetails(
 
       return res.data;
     },
-
-    staleTime: 1000 * 60 * 5,
+    retry: false,
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 }

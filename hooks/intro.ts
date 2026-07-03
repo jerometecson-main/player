@@ -40,5 +40,8 @@ export function useIntro({ imdbId, season, episode, enabled, tmdbId }: Params) {
       return res.json();
     },
     retry: false,
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 }
