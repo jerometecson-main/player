@@ -492,23 +492,11 @@ export async function GET(req: NextRequest) {
     }
     //Test155@zxcstream.xyz's Account
     const proxies = [
-      // "https://icarus.test169-123.workers.dev/", //
-
-      // "https://icarus.test168-123.workers.dev/",
-      // "https://icarus.test167-123.workers.dev/",
-      // "https://icarus.test166-123.workers.dev/",
-      // "https://icarus.test165-123.workers.dev/",
-      // "https://icarus.test164-123.workers.dev/",
-      // "https://icarus.test163-123.workers.dev/",
-      // "https://icarus.test162-123.workers.dev/",
-      // "https://berkas.test161-123.workers.dev/",
-      // "https://berkas.test160-123.workers.dev/",
       "https://icarus.test155-123.workers.dev/",
       "https://proxy.icarus1.workers.dev/",
       "https://proxy.icarus2.workers.dev/",
-      // "https://berkas.test158-123.workers.dev/", //
-      // "https://berkas.test159-123.workers.dev/", //
-
+      "https://late-snowflake-5076.zxcprime362.workers.dev/",
+      "https://weathered-frost-60b0.zxcprime361.workers.dev/",
       // "https://icarus.test154-123.workers.dev/",
       // "https://icarus.test156-123.workers.dev/",
       // "https://icarus.test157-123.workers.dev/",
