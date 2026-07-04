@@ -45,6 +45,7 @@ export default function Episodes({
     tmdbId,
     season_number: selectSeason,
     media_type: "tv",
+    enable: open,
   });
 
   const closeDrawer = () => {

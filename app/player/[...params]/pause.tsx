@@ -1,5 +1,4 @@
 import { TmdbDetailsResponse } from "@/hooks/tmdb-types";
-import { MovieTypes } from "@/types/types";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
