@@ -265,7 +265,8 @@ export default function Home() {
               <div className="md:text-base text-sm text-muted-foreground text-left space-y-3 max-h-100 overflow-auto pr-2">
                 <div>
                   To avoid confusion, please only use and follow the{" "}
-                  <strong>zxcstream.xyz</strong> domain.
+                  <strong>zxcstream.xyz</strong> or{" "}
+                  <strong>zxcprime.xyz</strong> domain.
                 </div>
 
                 <div>
@@ -388,9 +389,9 @@ export default function Home() {
                 </div>
               </Link>
 
-              <Link href={`https://zxcstream.icu`} target="_blank">
+              <Link href={`https://zxcprime.xyz`} target="_blank">
                 <div className="flex-1 text-center text-muted-foreground lg:text-base text-sm">
-                  zxcstream.icu
+                  zxcprime.xyz
                 </div>
               </Link>
             </div>
