@@ -18,11 +18,12 @@ export async function GET(
 
   const url = `https://api.themoviedb.org/3/tv/${id}/season/${season}?api_key=47a1a7df542d3d483227f758a7317dff&language=${encodeURIComponent(language)}`;
 
-  const res = await fetch(url, {
-    next: {
-      revalidate: 60 * 60 * 24,
-    },
-  });
+  // const res = await fetch(url, {
+  //   next: {
+  //     revalidate: 60 * 60 * 24,
+  //   },
+  // });
+  const res = await fetch(url, { cache: "no-store" });
 
   if (!res.ok) {
     return NextResponse.json(
