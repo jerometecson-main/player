@@ -27,7 +27,7 @@ export default function Embed() {
   const backdrop = details?.backdrop_paths[0] ?? null;
 
   return (
-    <div className="relative w-full h-dvh bg-black overflow-hidden">
+    <div className="relative w-full h-dvh bg-black overflow-hidden flex justify-center items-center">
       <AnimatePresence>
         {isLoading && (
           <motion.div
@@ -41,7 +41,7 @@ export default function Embed() {
               <img
                 src={`https://image.tmdb.org/t/p/original${backdrop}`}
                 alt="backdrop"
-                className="object-cover opacity-30 "
+                className="object-cover h-full  w-full opacity-30 "
               />
             )}
             <div className="absolute">
@@ -59,7 +59,7 @@ export default function Embed() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
             src={source.embed}
-            className="absolute inset-0 w-full h-screen"
+            className="h-full w-full"
             frameBorder={0}
             allowFullScreen
           />
