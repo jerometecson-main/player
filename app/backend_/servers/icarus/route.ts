@@ -498,18 +498,18 @@ export async function GET(req: NextRequest) {
       "https://summer-poetry-0561.icarus015.workers.dev/",
 
       "https://dawn-mud-4987.icarus014.workers.dev/",
-      "https://rapid-sky-fc42.icarus013.workers.dev/",
+
       "https://old-surf-c6eb.icarus012.workers.dev/",
       "https://wandering-flower-cc32.icarus011.workers.dev/",
       //
-      "https://broken-frost-e94a.icarus010.workers.dev/",
+
       "https://small-recipe-9008.icarus09.workers.dev/",
       "https://morning-haze-36e3.icarus08.workers.dev/",
-      "https://flat-term-3190.icarus07.workers.dev/",
+
       //
-      "https://divine-king-c609.icarus06.workers.dev/",
+
       "https://little-limit-e11e.icarus05.workers.dev/",
-      "https://dry-morning-36fb.icarus04.workers.dev/",
+
       "https://ancient-limit-83f0.icarus03.workers.dev/",
       "https://sparkling-credit-c6b8.icarus02.workers.dev/",
       "https://green-dawn-9241.icarus01.workers.dev/",
