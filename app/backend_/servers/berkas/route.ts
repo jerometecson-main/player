@@ -5,8 +5,7 @@ import { fetchWithTimeout } from "@/lib/fetch-timeout";
 import { FIELD_MAP } from "@/lib/token";
 import { createClient } from "@supabase/supabase-js";
 import { encryptUrl } from "@/lib/encryptor";
-// create a worker and name it berkas and add a worker subdomain the final url should look like berkas.test041.workers.dev, make it fast
-//ZXCTEST8
+
 //AES_KEY
 //48cea93448b6719f32471b15777eb140db961b6ba6f1fc92cb92b0fdd7da555d
 const supabase = createClient(
@@ -204,19 +203,19 @@ const PROXY_WORKERS = [
   "https://berkas.test018.workers.dev/",
   "https://berkas.test020.workers.dev/",
   // "https://berkas.test013.workers.dev/",
-  // "https://berkas.test015-505.workers.dev/",
-  // "https://berkas.test016.workers.dev/",
-  // "https://berkas.test014-25a.workers.dev/",
-  // "https://berkas.test09-635.workers.dev/",
-  // "https://berkas.test010-f3d.workers.dev/",
-  // "https://berkas.test011.workers.dev/",
-  // "https://berkas.test012.workers.dev/",
-  // "https://berkas.test05-187.workers.dev/",
-  // "https://berkas.test06-c51.workers.dev/",
-  // "https://berkas.test07-84f.workers.dev/",
-  // "https://berkas.test08-0df.workers.dev/",
-  // "https://berkas.test01-05a.workers.dev/",
-  // "https://berkas.test02-663.workers.dev/",
+  "https://berkas.test015-505.workers.dev/",
+  "https://berkas.test016.workers.dev/",
+  "https://berkas.test014-25a.workers.dev/",
+  "https://berkas.test09-635.workers.dev/",
+  "https://berkas.test010-f3d.workers.dev/",
+  "https://berkas.test011.workers.dev/",
+  "https://berkas.test012.workers.dev/",
+  "https://berkas.test05-187.workers.dev/",
+  "https://berkas.test06-c51.workers.dev/",
+  "https://berkas.test07-84f.workers.dev/",
+  "https://berkas.test08-0df.workers.dev/",
+  "https://berkas.test01-05a.workers.dev/",
+  "https://berkas.test02-663.workers.dev/",
   // "https://berkas.test03-4fb.workers.dev/",
   // "https://berkas.test04-cee.workers.dev/",
 ];
