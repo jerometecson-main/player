@@ -492,30 +492,42 @@ export async function GET(req: NextRequest) {
     } //Je@09185134757
     //Test155@zxcstream.xyz's Account
     const proxies = [
+      "https://autumn-sky-7829.icarus041.workers.dev/",
+      "https://super-tree-8f2e.icarus040.workers.dev/",
+      "https://steep-sky-b7c6.icarus039.workers.dev/",
+      "https://patient-base-d281.icarus038.workers.dev/",
+      "https://sweet-frost-4413.icarus037.workers.dev/",
+      "https://wild-frost-90b0.icarus035.workers.dev/",
+      "https://frosty-term-80f0.icarus036.workers.dev/",
+      "https://misty-wildflower-f895.icarus034.workers.dev/",
+      "https://snowy-lab-9d5f.icarus033.workers.dev/",
+      "https://rough-pond-0449.icarus032.workers.dev/",
+      "https://weathered-mountain-aca0.icarus031.workers.dev/",
+      "https://fragrant-surf-698c.icarus030.workers.dev/",
+      "https://curly-snowflake-2593.icarus029.workers.dev/",
+      "https://calm-glitter-8377.icarus028.workers.dev/",
+      "https://withered-lab-a730.icarus027.workers.dev/",
+      "https://blue-flower-fe30.icarus026.workers.dev/",
+      "https://billowing-truth-c158.icarus025.workers.dev/",
+      "https://divine-sun-7d33.icarus024.workers.dev/",
+      "https://billowing-dream-d9ad.icarus023.workers.dev/",
+      "https://mute-flower-d701.icarus022.workers.dev/",
+      "https://dark-boat-61e0.icarus021.workers.dev/",
       "https://restless-paper-f509.icarus020.workers.dev/",
       "https://billowing-bread-6c35.icarus019.workers.dev/",
       "https://gentle-frost-0125.icarus018.workers.dev/",
       "https://summer-poetry-a019.icarus017.workers.dev/",
       "https://billowing-sea-003c.icarus016.workers.dev/",
       "https://summer-poetry-0561.icarus015.workers.dev/",
-
       "https://dawn-mud-4987.icarus014.workers.dev/",
-
       "https://old-surf-c6eb.icarus012.workers.dev/",
       "https://wandering-flower-cc32.icarus011.workers.dev/",
-      //
-
       "https://small-recipe-9008.icarus09.workers.dev/",
       "https://morning-haze-36e3.icarus08.workers.dev/",
-
-      //
-
       "https://little-limit-e11e.icarus05.workers.dev/",
-
       "https://ancient-limit-83f0.icarus03.workers.dev/",
       "https://sparkling-credit-c6b8.icarus02.workers.dev/",
       "https://green-dawn-9241.icarus01.workers.dev/",
-
       "https://proxy.icarus14.workers.dev/",
       "https://proxy.icarus13.workers.dev/",
       "https://proxy.icarus12.workers.dev/",
@@ -525,7 +537,6 @@ export async function GET(req: NextRequest) {
       "https://proxy.icarus8.workers.dev/",
       "https://proxy.icarus7.workers.dev/",
       "https://proxy.icarus3.workers.dev/",
-      //
       "https://icarus.test155-123.workers.dev/",
       "https://proxy.icarus1.workers.dev/",
       "https://proxy.icarus2.workers.dev/",
