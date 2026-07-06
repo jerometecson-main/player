@@ -12,6 +12,7 @@ const ALLOWED_REFERERS = [
   "https://www.zxcprime.site/",
   //
   "https://z.zxcstream.xyz/",
+  "https://daedalus.zxcstream.xyz/",
   "https://a.zxcstream.xyz/",
   "https://embed.zxcstream.xyz/",
   "https://cdn.zxcstream.xyz/",
@@ -31,6 +32,7 @@ export const ALLOWED_ORIGINS = [
   "https://www.zxcprime.site",
   //
   "https://z.zxcstream.xyz",
+  "https://daedalus.zxcstream.xyz",
   "https://a.zxcstream.xyz",
   "https://embed.zxcstream.xyz",
   "https://cdn.zxcstream.xyz",
