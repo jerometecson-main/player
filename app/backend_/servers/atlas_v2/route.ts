@@ -42,20 +42,24 @@ function selectBestFile(files: any[]) {
   );
 }
 
+const PROXY_PREFIX = "https://proxy.jinluxusz.workers.dev/?url=";
+
 function buildResponse(streams: Record<string, string>, cache: boolean) {
   const links = QUALITY_ORDER.filter((q) => streams[q]).map((q) => ({
     type: "hls" as const,
-    link: streams[q],
+    link: `${PROXY_PREFIX}${encodeURIComponent(
+      Buffer.from(streams[q], "utf8").toString("base64url"),
+    )}`,
     resolution: parseInt(q),
   }));
+
   return NextResponse.json({
     success: true,
+    cache,
     links,
     subtitles: [],
-    meow: cache,
   });
 }
-
 export async function GET(req: NextRequest) {
   const logRequest = (status: number, reason: string) => {
     const tmdbId = req.nextUrl.searchParams.get(FIELD_MAP.id);

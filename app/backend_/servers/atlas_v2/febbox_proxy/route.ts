@@ -8,7 +8,6 @@ export async function GET(request: NextRequest) {
     return new Response("Missing url", { status: 400 });
   }
 
-  // 🔥 decode once (fix double encoding)
   let decodedTarget: string;
   try {
     decodedTarget = decodeURIComponent(target);
@@ -16,73 +15,100 @@ export async function GET(request: NextRequest) {
     decodedTarget = target;
   }
 
-  // 🔥 build headers
   const headers: Record<string, string> = {
     Referer: "https://hls.shegu.net/",
-    "User-Agent": request.headers.get("user-agent") || "Mozilla/5.0",
+    "User-Agent": request.headers.get("user-agent") ?? "Mozilla/5.0",
   };
 
-  // 🔥 forward range (important for video)
   const range = request.headers.get("range");
   if (range) {
-    headers["Range"] = range;
+    headers.Range = range;
   }
 
   const res = await fetch(decodedTarget, {
     method: "GET",
     headers,
+    redirect: "follow",
   });
 
   const contentType = res.headers.get("content-type") || "";
 
   // =========================================
-  // 🔥 HANDLE M3U8 PLAYLIST
+  // PLAYLIST (.m3u8)
   // =========================================
-  if (contentType.includes("mpegurl") || decodedTarget.includes(".m3u8")) {
+  if (
+    contentType.includes("mpegurl") ||
+    contentType.includes("application/vnd.apple.mpegurl") ||
+    decodedTarget.includes(".m3u8")
+  ) {
     let text = await res.text();
+
+    const origin = new URL(request.url).origin;
     const base = new URL(decodedTarget);
 
-    text = text.replace(
-      /(https?:\/\/[^\s"]+)|URI="([^"]+)"/g,
-      (match, absUrl, quotedUrl) => {
-        let original = absUrl || quotedUrl;
-        if (!original) return match;
+    text = text
+      .split("\n")
+      .map((line) => {
+        const trimmed = line.trim();
 
-        // resolve relative URLs
-        try {
-          original = new URL(original, base).toString();
-        } catch {}
+        if (!trimmed) return line;
 
-        // 🔥 ONLY proxy .m3u8 (avoid segment 403 issue)
-        if (!original.includes(".m3u8")) {
-          return match;
+        // Rewrite EXT-X-MAP
+        if (trimmed.includes('URI="')) {
+          return line.replace(/URI="([^"]+)"/g, (_, uri) => {
+            const absolute = new URL(uri, base).toString();
+
+            return `URI="${origin}/backend_/servers/atlas_v2/febbox_proxy?url=${encodeURIComponent(
+              absolute,
+            )}"`;
+          });
         }
 
-        let clean;
-        try {
-          clean = decodeURIComponent(original);
-        } catch {
-          clean = original;
+        // Leave playlist tags alone
+        if (trimmed.startsWith("#")) {
+          return line;
         }
 
-        const proxied = `/backend/nyak/?url=${encodeURIComponent(clean)}`;
+        // Rewrite every URI (relative or absolute)
+        const absolute = new URL(trimmed, base).toString();
 
-        return quotedUrl ? `URI="${proxied}"` : proxied;
-      },
-    );
+        return `${origin}/backend_/servers/atlas_v2/febbox_proxy?url=${encodeURIComponent(
+          absolute,
+        )}`;
+      })
+      .join("\n");
 
     return new Response(text, {
+      status: res.status,
       headers: {
         "Content-Type": "application/vnd.apple.mpegurl",
         "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "*",
       },
     });
   }
 
   // =========================================
-  // 🔥 HANDLE SEGMENTS / MEDIA
+  // SEGMENTS (.m4s/.ts/.mp4)
   // =========================================
-  const outHeaders = new Headers(res.headers);
+  const outHeaders = new Headers();
+
+  const headersToCopy = [
+    "content-type",
+    "content-length",
+    "accept-ranges",
+    "content-range",
+    "cache-control",
+    "etag",
+    "last-modified",
+  ];
+
+  for (const header of headersToCopy) {
+    const value = res.headers.get(header);
+    if (value) {
+      outHeaders.set(header, value);
+    }
+  }
 
   outHeaders.set("Access-Control-Allow-Origin", "*");
   outHeaders.set("Access-Control-Expose-Headers", "*");
