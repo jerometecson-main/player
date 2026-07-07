@@ -2,6 +2,12 @@ import { ServerTypes } from "@/types/player-types";
 
 export const initialServers: ServerTypes[] = [
   {
+    name: "Daedalus IV",
+    server: "daedalus",
+    status: "queue",
+    desc: "Alternative",
+  },
+  {
     name: "Icarus I",
     server: "icarus",
     status: "queue",
@@ -27,12 +33,6 @@ export const initialServers: ServerTypes[] = [
   //   server: "athena",
   //   status: "queue",
   //   desc: "Main Server & Multi Audio Support",
-  // },
-  // {
-  //   name: "Daedalus IV",
-  //   server: "daedalus",
-  //   status: "queue",
-  //   desc: "Alternative",
   // },
 
   // {
