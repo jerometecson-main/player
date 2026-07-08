@@ -7,7 +7,14 @@ export default function LoadingMetadata({ logo }: { logo: string }) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
-      className="fixed inset-0   overflow-hidden pointer-events-none z-30 bg-linear-to-bl from-transparent via-transparent to-black"
+      className="
+fixed inset-0 overflow-hidden pointer-events-none z-30
+bg-radial from-transparent via-transparent to-black
+before:content-['']
+before:absolute before:inset-0
+before:bg-linear-to-bl
+before:from-transparent before:via-transparent before:to-black/80
+"
     >
       <div className="absolute bottom-12 left-12   flex justify-center items-center  ">
         <img

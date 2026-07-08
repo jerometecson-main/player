@@ -150,7 +150,7 @@ export default function MainControls({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
       className={cn(
-        "z-10 absolute inset-0",
+        "z-50 absolute inset-0",
         "flex flex-col justify-between",
         "pointer-events-none",
         "bg-linear-to-b from-black/40 via-transparent to-black/70",
@@ -185,15 +185,10 @@ export default function MainControls({
         <div
           className={cn("md:hidden landscape:block", back ? "text-center" : "")}
         >
-          <p
-            className={cn(
-              "sm:text-xs text-xs landscape:text-[0.6rem]",
-              "text-gray-400",
-            )}
-          >
+          <p className={cn("text-xs landscape:text-[0.6rem]", "text-gray-400")}>
             Your'e Watching
           </p>
-          <h1 className="text-sm sm:text-base landscape:text-sm font-semibold">
+          <h1 className="text-base landscape:text-sm font-semibold">
             {title} {media_type === "tv" ? `S${season}E${episode}` : ""}
           </h1>
         </div>

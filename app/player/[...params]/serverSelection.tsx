@@ -103,11 +103,11 @@ export function LyricsServerPicker({
       exit={{ opacity: 0, x: 30 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
       className={cn(
-        "h-full inset-0 absolute right-0",
+        "h-full inset-0 absolute right-0 z-40",
         "pointer-events-none",
         "bg-linear-to-l from-black/80 lg:via-transparent to-transparent",
       )}
-      onPointerMove={lockTimer}
+      onPointerMove={lockTimer}                         
     >
       <Swiper
         modules={[Mousewheel, Keyboard]}

@@ -522,7 +522,6 @@ export async function GET(req: NextRequest) {
     const proxies = [
       "https://little-frog-dbca.icarus049.workers.dev/",
       "https://damp-rain-dad6.icarus048.workers.dev/",
-      "https://curly-king-9595.icarus047.workers.dev/",
       "https://tight-fog-810b.icarus046.workers.dev/",
       "https://dawn-violet-1bfc.icarus045.workers.dev/",
       "https://small-bonus-631a.icarus044.workers.dev/",

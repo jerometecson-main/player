@@ -63,3 +63,4 @@ export const initialServers: ServerTypes[] = [
 //https://megacloudx.net/pl/90521/8/27/
 //https://megacloudx.net/mv/tt8814476/1081003/
 //https://cineb.sh/
+// https://mgeb.top/embed/1558981?player=megaplay

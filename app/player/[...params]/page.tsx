@@ -189,7 +189,6 @@ export default function Player() {
     data: source,
     error: sourceError,
     isLoading: sourceLoading,
-    refetch,
   } = useSource({
     media_type,
     tmdbId,
