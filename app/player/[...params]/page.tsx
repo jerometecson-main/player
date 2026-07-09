@@ -669,20 +669,33 @@ export default function Player() {
             "_blank",
             "popup,width=1,height=1,left=2000,top=1000",
           );
-          console.log(popup);
+
           const sandboxed =
             !popup || popup.closed || typeof popup.closed === "undefined";
+
           if (popup && !sandboxed) {
             popup.close();
           }
+
           setCheckedSandbox(true);
+
           if (sandboxed) {
             setIsSandboxed(true);
             return;
           }
+
+          // Only runs after the popup test succeeds
+          if (color !== "305CDE") {
+            triggerAd();
+          }
+
+          return;
         }
-        if (color === "305CDE") return;
-        triggerAd();
+
+        // Subsequent clicks
+        if (!isSandboxed && color !== "305CDE") {
+          triggerAd();
+        }
       }}
     >
       <AnimatePresence>
