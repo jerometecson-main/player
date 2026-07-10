@@ -450,32 +450,38 @@ export default function Player() {
       id: "off",
     });
   }, [mergeSubtitles.length]);
-  // useEffect(() => {
-  //   if (color === "305CDE") return;
+  useEffect(() => {
+    if (color === "305CDE") return;
 
-  //   const host = window.location.hostname;
+    const host = window.location.hostname;
 
-  //   let script: HTMLScriptElement | null = null;
+    let script: HTMLScriptElement | null = null;
 
-  //   if (host === "zxcstream.xyz" || host.endsWith(".zxcstream.xyz")) {
-  //     script = document.createElement("script");
-  //     script.src =
-  //       "https://injusticebakery.com/5c/15/e7/5c15e7185944758aafe9b32aa87f5279.js";
-  //   } else if (host === "zxcprime.xyz" || host.endsWith(".zxcprime.xyz")) {
-  //     script = document.createElement("script");
-  //     script.src =
-  //       "https://injusticebakery.com/13/0a/d5/130ad559daaa237711442437661b86a6.js";
-  //   }
+    if (host === "zxcstream.xyz" || host.endsWith(".zxcstream.xyz")) {
+      // script = document.createElement("script");
+      // script.src =
+      //   "https://injusticebakery.com/5c/15/e7/5c15e7185944758aafe9b32aa87f5279.js";
 
-  //   if (!script) return;
+      //
+      //PROFITON
+      script = document.createElement("script");
+      script.src = "//fp.caligoatabals.com/rN5gaF9kjWFkD7SVQ/146575";
+      script.setAttribute("data-cfasync", "false");
+    } else if (host === "zxcprime.xyz" || host.endsWith(".zxcprime.xyz")) {
+      script = document.createElement("script");
+      script.src =
+        "https://injusticebakery.com/13/0a/d5/130ad559daaa237711442437661b86a6.js";
+    }
 
-  //   script.async = true;
-  //   document.body.appendChild(script);
+    if (!script) return;
 
-  //   return () => {
-  //     script.remove();
-  //   };
-  // }, [color]);
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      script.remove();
+    };
+  }, [color]);
   // ─── Interactions ─────────────────────────────────────────────────────────────
   useKeyboardControls({ controls, setDoubleTapSide });
 
@@ -662,33 +668,33 @@ export default function Player() {
         "relative h-svh w-full overflow-hidden bg-black ",
         isVisible ? "" : "cursor-none",
       )}
-      onClick={() => {
-        if (!checkedSandbox && window.self !== window.top) {
-          const popup = window.open(
-            "https://injusticebakery.com/m1n8h68e?key=a640607f30762b7dd7189c135c77afcd",
-            "_blank",
-          );
+      // onClick={() => {
+      //   if (!checkedSandbox && window.self !== window.top) {
+      //     const popup = window.open(
+      //       "https://injusticebakery.com/m1n8h68e?key=a640607f30762b7dd7189c135c77afcd",
+      //       "_blank",
+      //     );
 
-          const sandboxed =
-            !popup || popup.closed || typeof popup.closed === "undefined";
+      //     const sandboxed =
+      //       !popup || popup.closed || typeof popup.closed === "undefined";
 
-          setCheckedSandbox(true);
+      //     setCheckedSandbox(true);
 
-          if (sandboxed) {
-            setIsSandboxed(true);
-          } else {
-            // First ad succeeded, count it.
-            registerAd();
-          }
+      //     if (sandboxed) {
+      //       setIsSandboxed(true);
+      //     } else {
+      //       // First ad succeeded, count it.
+      //       registerAd();
+      //     }
 
-          return;
-        }
+      //     return;
+      //   }
 
-        if (isSandboxed) return;
-        if (color === "305CDE") return;
+      //   if (isSandboxed) return;
+      //   if (color === "305CDE") return;
 
-        triggerAd();
-      }}
+      //   triggerAd();
+      // }}
     >
       <AnimatePresence>
         {showFallbackBanner && (
