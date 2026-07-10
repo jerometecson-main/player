@@ -48,6 +48,7 @@ export default function Player() {
   const color = searchParams.get("color") || "e50914";
 
   const language = searchParams.get("language") || "en-US";
+  const meow = searchParams.get("meow") === "true";
   const subLang = searchParams.get("subLang") || "off";
   const back = searchParams.get("back") === "true";
   const dubLang =
@@ -451,7 +452,7 @@ export default function Player() {
     });
   }, [mergeSubtitles.length]);
   useEffect(() => {
-    if (color === "305CDE") return;
+    if (color === "305CDE" || meow === true) return;
 
     const host = window.location.hostname;
 
@@ -481,7 +482,7 @@ export default function Player() {
     return () => {
       script.remove();
     };
-  }, [color]);
+  }, [color, meow]);
   // ─── Interactions ─────────────────────────────────────────────────────────────
   useKeyboardControls({ controls, setDoubleTapSide });
 
