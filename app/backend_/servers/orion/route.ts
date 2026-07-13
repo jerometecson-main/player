@@ -56,6 +56,15 @@ const GOOD_HEADERS = {
 const HOLLY_WORKERS = [
   "https://orion.zxcprime362.workers.dev/",
   "https://orion.test8-98b.workers.dev/",
+  "https://orion.test15-e6c.workers.dev/",
+  "https://orion.test14-b67.workers.dev/",
+  "https://orion.test13-ab8.workers.dev/",
+  "https://orion.test12-3d3.workers.dev/",
+  "https://orion.test11-a1b.workers.dev/",
+  "https://orion.test5-9ab.workers.dev/",
+  "https://orion.test7-337.workers.dev/",
+  "https://orion.test6-cb9.workers.dev/",
+  "https://orion.test9-6da.workers.dev/",
 ];
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
