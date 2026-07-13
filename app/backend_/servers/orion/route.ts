@@ -6,6 +6,40 @@ import { FIELD_MAP } from "@/lib/token";
 import { encryptUrl } from "@/lib/encryptor";
 import { createClient } from "@supabase/supabase-js";
 
+let blacklistCache: Set<string> | null = null;
+let blacklistCacheTime = 0;
+const BLACKLIST_TTL = 5 * 60_000;
+async function getNext8AMPH(): Promise<string> {
+  const now = new Date();
+  const ph = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Manila" }));
+  const next8AM = new Date(ph);
+  next8AM.setHours(8, 0, 0, 0);
+  if (ph >= next8AM) next8AM.setDate(next8AM.getDate() + 1);
+  const diff = next8AM.getTime() - ph.getTime();
+  return new Date(now.getTime() + diff).toISOString();
+}
+async function blacklistProxy(proxy: string) {
+  const expires_at = await getNext8AMPH();
+  await supabase
+    .from("proxy_blacklist")
+    .upsert(
+      { proxy, expires_at },
+      { onConflict: "proxy", ignoreDuplicates: false },
+    );
+  blacklistCache?.add(proxy);
+  console.log(`[PROXY] ⛔ blacklisted ${proxy}`);
+}
+async function getActiveProxies(proxies: string[]): Promise<string[]> {
+  if (!blacklistCache || Date.now() - blacklistCacheTime > BLACKLIST_TTL) {
+    const { data } = await supabase
+      .from("proxy_blacklist")
+      .select("proxy")
+      .gt("expires_at", new Date().toISOString());
+    blacklistCache = new Set((data ?? []).map((r: any) => r.proxy));
+    blacklistCacheTime = Date.now();
+  }
+  return proxies.filter((p) => !blacklistCache!.has(p));
+}
 const supabase = createClient(
   process.env.NEXT_PUBLIC_HOLLY_SUPABASE_URL_HOLLY!,
   process.env.HOLLY_SUPABASE_SERVICE_ROLE_KEY_HOLLY!,
@@ -19,8 +53,47 @@ const GOOD_HEADERS = {
   Cookie:
     "cf_clearance=Shib.kVZbVDgJDU1GKv1nbUVUVOmaQ5xdjU5pvCwLxg-1783909046-1.2.1.1-3iK8K2GIOeCtRAJ3l3WmPdDHjpKVpo8ieaAy17TRByJ0l0wKYlDPz2dRkqyRSeqz0TziVHmaJraDRzSBukJ.zJxeUwgxvat9hz8kCvB9kMjEmtKQpFxcxoYQ3I7FguWEndAqQppX9Xo.wkTgzNHGaQZuzDE6znn7G0RvI2BcRsIIR0u4wlxrsANladOz8CRnsMN.EQ7mvPcHd3AWq0hXpsjG1n6WJljyriChUetClEthytE4mhzRc_3qMEPlJ85W2wz9RfuH1247.rEjaBt1ztWlACrkcUtDDsYOquAojthHFmKygvZOYhnw.KVZXacdIQGVSakwm4ISD9z4C4M_qkxqYV4gG6jdqvOBLKKFho3j9rU.VpZ1vzMErFSMYH5NgETYeV3sYBCSOQFtd.ELqqBLIM_vvCF6WMj1OPDynQSxX28EGs7irFkcJGLQh6WPwE4LzHYfPYUfuP76bfKx3tj6aE6HVYfhZlmNb7QYTkgC62NvSBh6eh3snymTMkVN",
 };
-const HOLLY_WORKERS = ["https://orion.zxcprime362.workers.dev/"];
-
+const HOLLY_WORKERS = [
+  "https://orion.zxcprime362.workers.dev/",
+  "https://orion.test8-98b.workers.dev/",
+];
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+export async function getWorkingProxy(proxies: string[]) {
+  const activeProxies = await getActiveProxies(proxies);
+  const shuffledProxies = shuffle(activeProxies);
+  for (const proxy of shuffledProxies) {
+    try {
+      const res = await fetchWithTimeout(
+        proxy,
+        { method: "HEAD", headers: { Range: "bytes=0-1" } },
+        3000,
+      );
+      if (res.status === 429) {
+        await blacklistProxy(proxy);
+        continue;
+      }
+      if (res.ok) {
+        return proxy;
+      }
+    } catch (e: any) {
+      // console.log(`[PROXY] ✗ ${proxy} | ${e?.message}`);
+    }
+  }
+  return null;
+}
+const priority = (file: string) => {
+  if (file.includes("tripplestream.online")) return 0;
+  if (file.includes("/pl/")) return 1;
+  if (file.includes("/streamsvr/")) return 2;
+  return 3;
+};
 export async function GET(req: NextRequest) {
   const logRequest = (status: number, reason: string) => {
     const tmdbId = req.nextUrl.searchParams.get(FIELD_MAP.id);
@@ -77,6 +150,15 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    const worker = await getWorkingProxy(HOLLY_WORKERS);
+
+    if (!worker) {
+      logRequest(502, "no working worker");
+      return NextResponse.json(
+        { success: false, error: "No available worker" },
+        { status: 502 },
+      );
+    }
     // ─── CACHE CHECK ─────────────────────────────────────────────────────────
     const { data: cached } = await supabase
       .from("holly_movie_cache")
@@ -89,12 +171,7 @@ export async function GET(req: NextRequest) {
 
     if (cached?.sources?.length) {
       const encryptedH = await encryptUrl(JSON.stringify(GOOD_HEADERS));
-      const priority = (file: string) => {
-        if (file.includes("tripplestream.online")) return 0;
-        if (file.includes("/pl/")) return 1;
-        if (file.includes("/streamsvr/")) return 2;
-        return 3;
-      };
+
       const links = await Promise.all(
         [...cached.sources]
           .sort((a: any, b: any) => priority(a.file) - priority(b.file))
@@ -105,7 +182,7 @@ export async function GET(req: NextRequest) {
                 ? "streamsvr"
                 : "default",
             type: source.type === "hls" ? "hls" : "mp4",
-            link: `${HOLLY_WORKERS[0]}proxy?data=${encodeURIComponent(await encryptUrl(source.file))}&h=${encodeURIComponent(encryptedH)}`,
+            link: `${worker}proxy?data=${encodeURIComponent(await encryptUrl(source.file))}&h=${encodeURIComponent(encryptedH)}`,
             meow: true,
           })),
       );
@@ -125,11 +202,27 @@ export async function GET(req: NextRequest) {
         ? `${baseSlug}-season-${season}-episode-${episode}`
         : `${baseSlug}-${year}`;
 
-    const step1Res = await fetchWithTimeout(
-      `${HOLLY_WORKERS[0]}scrape?slug=${encodeURIComponent(hollySlug)}`,
+    let step1Res = await fetchWithTimeout(
+      `${worker}scrape?slug=${encodeURIComponent(hollySlug)}`,
       {},
       15000,
     );
+
+    if (step1Res.status === 429) {
+      const remaining = (await getActiveProxies(HOLLY_WORKERS)).filter(
+        (w) => w !== worker,
+      );
+      for (const w of shuffle(remaining)) {
+        const res = await fetchWithTimeout(
+          `${w}scrape?slug=${encodeURIComponent(hollySlug)}`,
+          {},
+          15000,
+        );
+        if (res.status === 429) continue;
+        step1Res = res;
+        break;
+      }
+    }
 
     if (!step1Res.ok) {
       logRequest(502, "step 1 failed");
@@ -157,7 +250,7 @@ export async function GET(req: NextRequest) {
       qualities[0];
     const encryptedH = await encryptUrl(JSON.stringify(GOOD_HEADERS));
     const step2Res = await fetchWithTimeout(
-      `${HOLLY_WORKERS[0]}resolve?embed_url=${encodeURIComponent(bestQuality.embed_url)}&h=${encodeURIComponent(encryptedH)}`,
+      `${worker}resolve?embed_url=${encodeURIComponent(bestQuality.embed_url)}&h=${encodeURIComponent(encryptedH)}`,
       {},
       15000,
     );
@@ -194,12 +287,6 @@ export async function GET(req: NextRequest) {
     );
 
     // ─── STEP 3: Build links ──────────────────────────────────────────────────
-    const priority = (file: string) => {
-      if (file.includes("tripplestream.online")) return 0;
-      if (file.includes("/pl/")) return 1;
-      if (file.includes("/streamsvr/")) return 2;
-      return 3;
-    };
 
     const links = await Promise.all(
       [...sources]
@@ -211,7 +298,7 @@ export async function GET(req: NextRequest) {
               ? "streamsvr"
               : "default",
           type: source.type === "hls" ? "hls" : "mp4",
-          link: `${HOLLY_WORKERS[0]}proxy?data=${encodeURIComponent(await encryptUrl(source.file))}&h=${encodeURIComponent(encryptedH)}`,
+          link: `${worker}proxy?data=${encodeURIComponent(await encryptUrl(source.file))}&h=${encodeURIComponent(encryptedH)}`,
         })),
     );
 

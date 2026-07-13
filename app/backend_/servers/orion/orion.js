@@ -27,22 +27,28 @@ function json(data, status = 200) {
   });
 }
 
-function cors() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, OPTIONS",
-      "Access-Control-Allow-Headers": "*",
-    },
-  });
-}
-
 function buildHollyUrl(slug) {
   const clean = slug.replace(/^\/|\/$/g, "");
   return /season-\d+-episode-\d+/i.test(clean)
     ? `${HOLLY_BASE}/episode/${clean}/`
     : `${HOLLY_BASE}/${clean}/`;
+}
+
+function getCorsOrigin(req) {
+  const origin = req.headers.get("Origin");
+  if (!origin) return "*"; // server-to-server, allow
+  try {
+    const hostname = new URL(origin).hostname;
+    if (
+      hostname.includes("localhost") ||
+      hostname.includes("zxcstream") ||
+      hostname.includes("zxcprime") ||
+      hostname.includes("mnflix")
+    ) {
+      return origin;
+    }
+  } catch {}
+  return null; // browser request from unknown origin, block
 }
 
 async function getHeaders(url, cryptoKey) {
@@ -64,6 +70,8 @@ async function handleScrape(url) {
   const pageRes = await fetch(pageUrl, {
     headers: { ...HOLLY_HEADERS, Accept: "text/html,*/*;q=0.8" },
   });
+
+  if (pageRes.status === 429) return json({ error: "Rate limited" }, 429);
   if (!pageRes.ok)
     return json({ error: `Page fetch failed: HTTP ${pageRes.status}` }, 502);
 
@@ -92,7 +100,7 @@ async function handleScrape(url) {
       ...(imdbid ? { imdbid } : {}),
     }).toString(),
   });
-
+  if (ajaxRes.status === 429) return json({ error: "Rate limited" }, 429);
   if (!ajaxRes.ok)
     return json({ error: `ajax POST failed: HTTP ${ajaxRes.status}` }, 502);
 
@@ -318,7 +326,22 @@ async function handleProxy(url, request, cryptoKey) {
 
 export default {
   async fetch(request, env) {
-    if (request.method === "OPTIONS") return cors();
+    const allowedOrigin = getCorsOrigin(request);
+
+    if (allowedOrigin === null)
+      return new Response("Forbidden", { status: 403 });
+
+    if (request.method === "OPTIONS") {
+      return new Response(null, {
+        status: 204,
+        headers: {
+          "Access-Control-Allow-Origin": allowedOrigin,
+          "Access-Control-Allow-Methods": "GET, OPTIONS",
+          "Access-Control-Allow-Headers": "*",
+          "Access-Control-Max-Age": "86400",
+        },
+      });
+    }
 
     const url = new URL(request.url);
     const pathname = url.pathname;
@@ -330,8 +353,8 @@ export default {
     return json({
       routes: {
         "/scrape?slug=frankenstein-2025": "Holly scraper",
-        "/resolve?embed_url=https://...&headers={...}": "Goodstream resolver",
-        "/proxy?url=https://...&headers={...}": "HLS proxy",
+        "/resolve?embed_url=https://...": "Goodstream resolver",
+        "/proxy?data=...&h=...": "HLS proxy",
       },
     });
   },
