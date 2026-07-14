@@ -23,8 +23,16 @@ import { Layers2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { SeasonsType } from "@/hooks/tmdb-types";
-
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { IntroTypesResponse } from "@/hooks/intro";
+import { EpisodesIcon } from "@/components/icons/episodes";
 export interface VideoControlsProps {
   state: VideoPlayerState;
   controls: VideoPlayerControls;
@@ -127,6 +135,8 @@ export default function MainControls({
   const [hoverTime, setHoverTime] = useState<number | null>(null);
   const searchParams = useSearchParams();
   const [hoverX, setHoverX] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [selectSeason, setSeasonSelect] = useState(season);
   const handleSliderHover = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!sliderRef.current || !state.duration) return;
 
@@ -194,25 +204,51 @@ export default function MainControls({
             {title} {media_type === "tv" ? `S${season}E${episode}` : ""}
           </h1>
         </div>
-        <button
-          onClick={() => setShowServer((prev) => !prev)}
-          className="cursor-pointer pointer-events-auto"
-        >
-          <Layers2
-            strokeWidth={3}
-            className={cn(
-              "lg:size-8 md:size-7 size-6.5 landscape:size-5",
-              showServer ? "text-foreground" : "text-gray-300",
-            )}
-          />
-        </button>
+        <div className="flex items-center gap-6">
+          {open && media_type === "tv" && (
+            <div className="cursor-pointer pointer-events-auto">
+              <Select
+                value={String(selectSeason)}
+                onValueChange={(val) => setSeasonSelect(Number(val))}
+              >
+                <SelectTrigger className="w-full backdrop-blur-md">
+                  <SelectValue placeholder="Select season" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {seasons.map((s) => (
+                      <SelectItem
+                        key={s.season_number}
+                        value={String(s.season_number)}
+                      >
+                        {s.name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+          <button
+            onClick={() => setShowServer((prev) => !prev)}
+            className="cursor-pointer pointer-events-auto"
+          >
+            <Layers2
+              strokeWidth={3}
+              className={cn(
+                "lg:size-8 md:size-7 size-6.5 landscape:size-5",
+                showServer ? "text-foreground" : "text-gray-300",
+              )}
+            />
+          </button>
+        </div>
       </div>
       <div
         className={cn(
           "w-full ",
           "lg:p-4 p-3 landscape:p-2",
           "lg:py-6 py-3",
-          "space-y-3 ",
+          "space-y-2 ",
           "z-30",
         )}
       >
@@ -239,7 +275,7 @@ export default function MainControls({
           <h1
             className={cn(
               "text-[clamp(1.5rem,2.3vw,2rem)]",
-              " md:mt-1.5",
+              " md:mt-1",
               "font-bold tracking-wide",
             )}
           >
@@ -441,16 +477,20 @@ export default function MainControls({
                 source={source}
                 dubs={dubs}
               />
-              {media_type === "tv" && (
-                <Episodes
-                  tmdbId={tmdbId}
-                  season={season}
-                  episode={episode}
-                  lockTimer={lockTimer}
-                  resetTimer={resetTimer}
-                  seasons={seasons}
-                />
-              )}
+              <button
+                onClick={() => {
+                  setOpen((prev) => !prev);
+                  lockTimer();
+                }}
+                onPointerMove={lockTimer}
+                onPointerDown={lockTimer}
+                className={cn(
+                  "lg:-translate-y-0.5  text-white/80 hover:text-white cursor-pointer",
+                  open ? "text-foreground" : "",
+                )}
+              >
+                <EpisodesIcon className="lg:size-9.5 md:size-7 size-7.5 landscape:size-6" />
+              </button>
               {/* <button
                 onClick={controls.toggleFullscreen}
                 className="cursor-pointer text-white/80 hover:text-white"
@@ -500,6 +540,20 @@ export default function MainControls({
           </div>
         </div>
       </div>
+      {media_type === "tv" && (
+        <Episodes
+          tmdbId={tmdbId}
+          season={season}
+          episode={episode}
+          lockTimer={lockTimer}
+          resetTimer={resetTimer}
+          seasons={seasons}
+          open={open}
+          setOpen={setOpen}
+          selectSeason={selectSeason}
+          color={color}
+        />
+      )}
     </motion.div>
   );
 }

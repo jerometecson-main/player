@@ -1,27 +1,15 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { FreeMode, Keyboard, Mousewheel } from "swiper/modules";
+import { Keyboard, Mousewheel } from "swiper/modules";
 import "swiper/css";
-import "swiper/css/free-mode";
 import { useTvSeason } from "@/hooks/get-seasons";
-import Link from "next/link";
-import { EpisodesIcon } from "@/components/icons/episodes";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, VideoOff, X } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { VideoOff, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useSearchParams } from "next/navigation";
+import type { Swiper as SwiperInstance } from "swiper";
 import { SeasonsType } from "@/hooks/tmdb-types";
-
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 export default function Episodes({
   tmdbId,
   season,
@@ -29,6 +17,10 @@ export default function Episodes({
   lockTimer,
   resetTimer,
   seasons,
+  open,
+  setOpen,
+  selectSeason,
+  color,
 }: {
   tmdbId: string;
   season: number;
@@ -36,11 +28,15 @@ export default function Episodes({
   lockTimer: () => void;
   resetTimer: () => void;
   seasons: SeasonsType[];
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  selectSeason: number;
+  color: string;
 }) {
-  const [open, setOpen] = useState(false);
-  const [activateSpoiler, setActivateSpoiler] = useState(true);
-  const [selectSeason, setSeasonSelect] = useState(season);
   const searchParams = useSearchParams();
+  const [visualIndex, setVisualIndex] = useState(0);
+  const swiperRef = useRef<SwiperInstance | null>(null);
+
   const { data, isLoading } = useTvSeason({
     tmdbId,
     season_number: selectSeason,
@@ -53,88 +49,64 @@ export default function Episodes({
     resetTimer();
   };
 
+  // Default to the currently playing episode if we're on the currently
+  // playing season, otherwise the first episode.
+  const defaultIndex =
+    selectSeason === season
+      ? Math.max(
+          0,
+          data?.episodes.findIndex((e) => e.episode_number === episode) ?? 0,
+        )
+      : 0;
+  console.log(selectSeason, season);
   return (
-    <div>
-      <button
-        onClick={() => {
-          setOpen(true);
-          lockTimer();
-        }}
-        onPointerMove={lockTimer}
-        onPointerDown={lockTimer}
-        className="lg:translate-y-0.5 translate-y-1 text-white/80 hover:text-white cursor-pointer"
-      >
-        <EpisodesIcon className="lg:size-9.5 md:size-7 size-7.5 landscape:size-6" />
-      </button>
+    <AnimatePresence>
+      {open && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            className="fixed inset-0  bg-linear-to-l from-black/80 via-transparent to-transparent pointer-events-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            onClick={closeDrawer}
+          />
 
-      <AnimatePresence>
-        {open && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              className="fixed inset-0 z-40 "
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              onClick={closeDrawer}
-            />
-
-            {/* Right Panel */}
-            <motion.div
-              className={cn(
-                "fixed top-0 bottom-0 right-0 z-50",
-                "lg:px-4 px-2 py-4",
-                "space-y-3",
-                "flex flex-col justify-center bg-background lg:max-w-sm md:max-w-xs max-w-3xs",
-              )}
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 45, stiffness: 420 }}
-            >
-              <div className="flex justify-between items-center gap-1.5">
-                <Select
-                  value={String(selectSeason)}
-                  onValueChange={(val) => setSeasonSelect(Number(val))}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select season" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {seasons.map((s) => (
-                        <SelectItem
-                          key={s.season_number}
-                          value={String(s.season_number)}
-                        >
-                          {s.name}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <Button
-                  onClick={closeDrawer}
-                  variant="destructive"
-                  className="cursor-pointer"
-                >
-                  <X />
-                </Button>
-              </div>
+          <motion.div
+            className={cn(
+              "fixed top-0 bottom-0 right-0  lg:px-12 px-4 py-4",
+              "space-y-3",
+            )}
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 45, stiffness: 420 }}
+          >
+            {isLoading ? null : data?.episodes.length === 0 ? (
+              <NoEpisodesFound />
+            ) : data?.episodes.length ? (
               <Swiper
+                key={selectSeason}
                 modules={[Mousewheel, Keyboard]}
+                direction="vertical"
+                slidesPerView="auto"
+                centeredSlides
+                initialSlide={defaultIndex}
                 mousewheel={{
                   sensitivity: 1,
                   thresholdDelta: 10,
                   forceToAxis: true,
-                  releaseOnEdges: true,
+                }}
+                onSwiper={(swiper) => {
+                  swiperRef.current = swiper;
+                  setVisualIndex(swiper.activeIndex);
+                }}
+                onSlideChange={(swiper) => {
+                  setVisualIndex(swiper.activeIndex);
                 }}
                 keyboard={{ enabled: true, onlyInViewport: true }}
-                slidesPerView="auto"
-                spaceBetween={8}
-                direction="vertical"
-                className="h-full w-full pointer-events-auto"
+                className="absolute h-full overflow-visible! pointer-events-auto"
                 style={
                   {
                     "--swiper-wrapper-transition-timing-function":
@@ -142,101 +114,123 @@ export default function Episodes({
                   } as React.CSSProperties
                 }
               >
-                {data?.episodes.length === 0 ? (
-                  <NoEpisodesFound />
-                ) : isLoading ? (
-                  Array.from({ length: 5 }).map((_, i) => (
-                    <SwiperSlide key={i} className="h-auto!">
-                      <EpisodeSkeletonCard />
-                    </SwiperSlide>
-                  ))
-                ) : (
-                  data?.episodes.map((e) => {
-                    const isActive =
-                      episode === e.episode_number && season === selectSeason;
+                {data.episodes.map((e, i) => {
+                  const distance = i - visualIndex;
 
-                    return (
-                      <SwiperSlide key={e.id} className="h-auto!">
-                        <Link
-                          href={`/player/tv/${tmdbId}/${selectSeason}/${e.episode_number}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`}
-                          onClick={closeDrawer}
-                          className="group"
+                  const isActive = distance === 0;
+                  const isPrev = distance === -1;
+                  const isNext = distance === 1;
+                  const isPrev2 = distance === -2;
+                  const isNext2 = distance === 2;
+
+                  return (
+                    <SwiperSlide
+                      key={e.id}
+                      className={cn(
+                        " w-auto! h-auto!",
+                        isActive && "z-3",
+                        isPrev && "z-2",
+                        isNext && "z-2",
+                        isPrev2 && "z-1",
+                        isNext2 && "z-1",
+                        Math.abs(distance) > 2 && "z-0",
+                      )}
+                      onClick={() => swiperRef.current?.slideTo(i)}
+                    >
+                      <Link
+                        href={`/player/tv/${tmdbId}/${selectSeason}/${e.episode_number}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`}
+                        onClick={closeDrawer}
+                        className="group"
+                      >
+                        <div
+                          className={cn(
+                            " transition-all duration-300  aspect-video lg:w-md md:w-sm w-60 rounded-lg overflow-hidden drop-shadow-2xl bg-background",
+                            isActive && "scale-100 md:border-3 border-2  ",
+                            isPrev &&
+                              "md:translate-y-20 translate-y-10 translate-x-5 scale-85 brightness-40 ",
+                            isNext &&
+                              "md:-translate-y-20 -translate-y-10 translate-x-5 scale-85 brightness-40 ",
+                            isPrev2 &&
+                              "md:translate-y-40 scale-80 translate-y-20 brightness-20 translate-x-10 ",
+                            isNext2 &&
+                              "md:-translate-y-40 -translate-y-20 scale-80 brightness-20 translate-x-10",
+                            Math.abs(distance) > 2 && " scale-70 brightness-20",
+                          )}
+                          style={
+                            isActive
+                              ? {
+                                  borderColor: `#${color}`,
+                                }
+                              : undefined
+                          }
                         >
+                          {e.still_path ? (
+                            <img
+                              src={`https://image.tmdb.org/t/p/w500${e.still_path}`}
+                              alt={e.name}
+                              loading="lazy"
+                              className={cn(
+                                "w-full h-full object-cover",
+                                "transition-all duration-300 group-hover:brightness-75 opacity-100",
+                              )}
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-neutral-900">
+                              <span className="text-5xl font-black text-neutral-800">
+                                {e.episode_number}
+                              </span>
+                            </div>
+                          )}
                           <div
                             className={cn(
-                              "p-1 backdrop-blur-md",
-                              "",
-                              isActive ? "from-red-900" : "from-card",
+                              "absolute inset-0  z-40 flex justify-start items-end p-3 ",
+                              isActive
+                                ? "bg-linear-to-tr from-black to-transparent"
+                                : "",
                             )}
                           >
-                            <div className="relative flex flex-col ">
-                              <div className="relative w-full aspect-video overflow-hidden rounded-md">
-                                {e.still_path ? (
-                                  <img
-                                    src={`https://image.tmdb.org/t/p/w500${e.still_path}`}
-                                    alt={e.name}
-                                    loading="lazy"
-                                    className={cn(
-                                      "w-full h-full object-cover",
-                                      "transition-all duration-300 group-hover:brightness-75",
-                                      !activateSpoiler && "blur-xl scale-110",
+                            <div>
+                              <h1 className="font-semibold md:text-lg text-sm">
+                                {e.episode_number}. {e.name}
+                              </h1>
+                              <div className="flex items-center gap-2 mt-05 text-gray-300 text-xs md:text-sm font-medium">
+                                {e.runtime && (
+                                  <span className="">{e.runtime} min</span>
+                                )}
+                                {e.runtime && e.air_date && (
+                                  <span className="">·</span>
+                                )}
+                                {e.air_date && (
+                                  <span className="">
+                                    {new Date(e.air_date).toLocaleDateString(
+                                      "en-US",
+                                      {
+                                        month: "short",
+                                        day: "numeric",
+                                        year: "numeric",
+                                      },
                                     )}
-                                  />
-                                ) : (
-                                  <div className="w-full h-full flex items-center justify-center bg-neutral-900">
-                                    <span className="text-5xl font-black text-neutral-800">
-                                      {e.episode_number}
-                                    </span>
-                                  </div>
+                                  </span>
                                 )}
                               </div>
-
-                              <div className="mt-2 pr-2 pl-1 py-1">
-                                <div className="flex items-baseline gap-2">
-                                  <span className="text-gray-500 text-sm md:text-base  font-medium tabular-nums shrink-0">
-                                    E{e.episode_number}
-                                  </span>
-                                  {activateSpoiler && (
-                                    <p className="lg:text-base text-sm text-white/80 font-medium truncate leading-snug">
-                                      {e.name}
-                                    </p>
-                                  )}
-                                </div>
-
-                                <div className="flex items-center gap-2 mt-0.5 text-gray-400 text-xs md:text-sm">
-                                  {e.runtime && (
-                                    <span className="">{e.runtime} min</span>
-                                  )}
-                                  {e.runtime && e.air_date && (
-                                    <span className="">·</span>
-                                  )}
-                                  {e.air_date && (
-                                    <span className="">
-                                      {new Date(e.air_date).toLocaleDateString(
-                                        "en-US",
-                                        {
-                                          month: "short",
-                                          day: "numeric",
-                                          year: "numeric",
-                                        },
-                                      )}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
+                              {isActive && (
+                                <p className="text-sm lg:line-clamp-3 md:line-clamp-2 hidden  text-gray-300 mt-2 ">
+                                  {e.overview}
+                                </p>
+                              )}
                             </div>
                           </div>
-                        </Link>
-                      </SwiperSlide>
-                    );
-                  })
-                )}
+                        </div>
+                      </Link>
+                    </SwiperSlide>
+                  );
+                })}
               </Swiper>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-    </div>
+            ) : null}
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -251,25 +245,6 @@ function NoEpisodesFound() {
         <p className="text-xs text-white/30">
           This season doesn't have any episodes yet.
         </p>
-      </div>
-    </div>
-  );
-}
-
-function EpisodeSkeletonCard() {
-  return (
-    <div className="flex flex-col max-w-50 sm:max-w-85 w-[160px] sm:w-[320px]">
-      <Skeleton className="w-full aspect-video rounded-md" />
-      <div className="mt-3 pr-2 space-y-2">
-        <div className="flex items-baseline gap-2">
-          <Skeleton className="h-4 w-6 shrink-0" />
-          <Skeleton className="h-4 w-28" />
-        </div>
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-3 w-12" />
-          <Skeleton className="h-3 w-3 rounded-full" />
-          <Skeleton className="h-3 w-20" />
-        </div>
       </div>
     </div>
   );

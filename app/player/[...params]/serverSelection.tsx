@@ -107,7 +107,7 @@ export function LyricsServerPicker({
         "pointer-events-none",
         "bg-linear-to-l from-black/80 lg:via-transparent to-transparent",
       )}
-      onPointerMove={lockTimer}                         
+      onPointerMove={lockTimer}
     >
       <Swiper
         modules={[Mousewheel, Keyboard]}
