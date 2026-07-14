@@ -1,5 +1,3 @@
-
-
 import { NextRequest, NextResponse } from "next/server";
 import { validateBackendToken } from "@/lib/validate-token";
 import { isValidReferer } from "@/lib/allowed-referers";
@@ -57,7 +55,15 @@ export async function GET(req: NextRequest) {
       .eq("media_type", mediaType)
       .eq("season", season ?? "")
       .eq("episode", episode ?? "")
+      .gt("expires_at", new Date().toISOString())
       .maybeSingle();
+
+    if (!data) {
+      return NextResponse.json(
+        { success: false, error: "Subtitles not found" },
+        { status: 404 },
+      );
+    }
 
     return NextResponse.json({
       success: true,

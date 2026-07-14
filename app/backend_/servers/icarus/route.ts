@@ -510,6 +510,9 @@ export async function GET(req: NextRequest) {
             season: season ?? "",
             episode: episode ?? "",
             subtitles,
+            expires_at: new Date(
+              Date.now() + 1000 * 60 * 60 * 45,
+            ).toISOString(),
           },
           {
             onConflict: "tmdb_id,media_type,season,episode",
