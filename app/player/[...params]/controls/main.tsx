@@ -477,20 +477,22 @@ export default function MainControls({
                 source={source}
                 dubs={dubs}
               />
-              <button
-                onClick={() => {
-                  setOpen((prev) => !prev);
-                  lockTimer();
-                }}
-                onPointerMove={lockTimer}
-                onPointerDown={lockTimer}
-                className={cn(
-                  "lg:-translate-y-0.5  text-white/80 hover:text-white cursor-pointer",
-                  open ? "text-foreground" : "",
-                )}
-              >
-                <EpisodesIcon className="lg:size-9.5 md:size-7 size-7.5 landscape:size-6" />
-              </button>
+              {media_type === "tv" && (
+                <button
+                  onClick={() => {
+                    setOpen((prev) => !prev);
+                    lockTimer();
+                  }}
+                  onPointerMove={lockTimer}
+                  onPointerDown={lockTimer}
+                  className={cn(
+                    "lg:-translate-y-0.5  text-white/80 hover:text-white cursor-pointer",
+                    open ? "text-foreground" : "",
+                  )}
+                >
+                  <EpisodesIcon className="lg:size-9.5 md:size-7 size-7.5 landscape:size-6" />
+                </button>
+              )}
               {/* <button
                 onClick={controls.toggleFullscreen}
                 className="cursor-pointer text-white/80 hover:text-white"
