@@ -5,15 +5,7 @@ import useSource from "@/hooks/source";
 import { cn } from "@/lib/utils";
 import { Ring } from "ldrs/react";
 import "ldrs/react/Ring.css";
-import {
-  Star,
-  StarHalf,
-  Download,
-  ExternalLink,
-  Languages,
-  MoveIcon,
-  Film,
-} from "lucide-react";
+import { Star, StarHalf, Download, Languages, Film } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -25,7 +17,6 @@ import {
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useAdStore } from "@/zustand/ad-store";
 import { useAdStore2 } from "@/zustand/ad-store2";
 
 type Tab = "overview" | "trailer" | "stream" | "download";

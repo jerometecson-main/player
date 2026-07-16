@@ -7,6 +7,7 @@ export function usePlayerServers({
 }: {
   defaultServerIndex: number;
 }) {
+  const isEmbedded = window.self !== window.top;
   const [servers, setServers] = useState<ServerTypes[]>(initialServers);
   const [serverIndex, setServerIndex] = useState(defaultServerIndex);
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
@@ -51,6 +52,16 @@ export function usePlayerServers({
       // ✅ All servers exhausted — mark current as failed, don't update index
       if (next === -1) {
         setAllFailed(true);
+
+        if (isEmbedded) {
+          window.parent.postMessage(
+            {
+              type: "VIDEO_ALL_SERVERS_FAILED",
+            },
+            "*",
+          );
+        }
+
         return prev.map((s, i) =>
           i === serverIndex ? { ...s, status: "failed" } : s,
         );

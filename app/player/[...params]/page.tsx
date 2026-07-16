@@ -4,7 +4,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useDoubleTap } from "use-double-tap";
-import { ArrowLeft, ExternalLink, TriangleAlert, X } from "lucide-react";
+import { ArrowLeft, TriangleAlert, X } from "lucide-react";
 import { Tailspin } from "ldrs/react";
 import "ldrs/react/Tailspin.css";
 import { cn } from "@/lib/utils";
@@ -31,6 +31,7 @@ import { useAdStore2 } from "@/zustand/ad-store2";
 import { useIntro } from "@/hooks/intro";
 import { SkipSegment } from "./controls/skip_segment";
 import useSubtitle from "@/hooks/subs";
+import { useAdsScript } from "@/hooks/useAdsScript";
 
 export default function Player() {
   // ─── URL Params ─────────────────────────────────────────────────────────────
@@ -155,6 +156,7 @@ export default function Player() {
   const genre = metadata?.genres?.[0]?.name ?? "N/A";
   const seasons = metadata?.seasons ?? [];
   const logo = metadata?.logo_paths?.[0] ?? null;
+
   useEffect(() => {
     window.parent.postMessage(
       {
@@ -466,39 +468,11 @@ export default function Player() {
       id: "off",
     });
   }, [mergeSubtitles.length]);
-  useEffect(() => {
-    // if (!checkedSandbox) return;
-    if (color === "305CDE" || meow === true || isSandboxed) return;
 
-    const host = window.location.hostname;
-
-    let script: HTMLScriptElement | null = null;
-
-    if (host === "zxcstream.xyz" || host.endsWith(".zxcstream.xyz")) {
-      // script = document.createElement("script");
-      // script.src =
-      //   "https://injusticebakery.com/5c/15/e7/5c15e7185944758aafe9b32aa87f5279.js";
-
-      //
-      //PROFITON
-      script = document.createElement("script");
-      script.src = "//fp.caligoatabals.com/rN5gaF9kjWFkD7SVQ/146575";
-      script.setAttribute("data-cfasync", "false");
-    } else if (host === "zxcprime.xyz" || host.endsWith(".zxcprime.xyz")) {
-      script = document.createElement("script");
-      script.src =
-        "https://injusticebakery.com/13/0a/d5/130ad559daaa237711442437661b86a6.js";
-    }
-
-    if (!script) return;
-
-    script.async = true;
-    document.body.appendChild(script);
-
-    return () => {
-      script.remove();
-    };
-  }, [color, meow, isSandboxed]);
+  useAdsScript({
+    enabled: !(color === "305CDE" || meow || isSandboxed),
+  });
+  useKeyboardControls({ controls, setDoubleTapSide });
   // useEffect(() => {
   //   // If not in an iframe, mark as checked immediately (no sandbox to worry about)
   //   if (window.self === window.top) {
@@ -509,7 +483,6 @@ export default function Player() {
   //   // Inside an iframe — defer the popup test to first click as before
   // }, []);
   // ─── Interactions ─────────────────────────────────────────────────────────────
-  useKeyboardControls({ controls, setDoubleTapSide });
 
   useEffect(() => {
     if (playback.canPlay) {

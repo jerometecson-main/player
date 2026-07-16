@@ -78,6 +78,7 @@ export function useVideoPlayer({
   load?: number;
   handleServerFail: () => void;
 }) {
+  const isEmbedded = window.self !== window.top;
   const [quality, setQuality] = useState<QualityLevel[]>([]);
   const [audioTracks, setAudioTracks] = useState<AudioTrackTypes[]>([]);
 
@@ -261,38 +262,38 @@ export function useVideoPlayer({
         }
 
         // =========================
-        // 📡 POST MESSAGE (only after 1 min, then every 60s)
+        // 📡 POST MESSAGE (every 1s)
         // =========================
-        if (time >= 60) {
-          if (now - lastPostRef.current >= 60_000) {
-            lastPostRef.current = now;
-            window.parent.postMessage(
-              {
-                type: "VIDEO_PROGRESS",
-                payload: {
-                  progressKey,
-                  currentTime: time,
-                  duration: video.duration,
-                  percent: Math.round((time / video.duration) * 100),
-                },
+        if (isEmbedded && now - lastPostRef.current >= 1000) {
+          lastPostRef.current = now;
+          window.parent.postMessage(
+            {
+              type: "VIDEO_PROGRESS",
+              payload: {
+                progressKey,
+                currentTime: time,
+                duration: video.duration,
+                percent: Math.round((time / video.duration) * 100),
               },
-              "*",
-            );
-          }
+            },
+            "*",
+          );
         }
 
         // =========================
         // 📡 POST MESSAGE AT 90%
         // =========================
-        if (!has90PercentFiredRef.current && time / video.duration >= 0.9) {
+        if (
+          isEmbedded &&
+          !has90PercentFiredRef.current &&
+          time / video.duration >= 0.9
+        ) {
           has90PercentFiredRef.current = true;
           window.parent.postMessage(
             {
               type: "VIDEO_NINETY_PERCENT",
               payload: {
                 progressKey,
-                currentTime: time,
-                duration: video.duration,
               },
             },
             "*",
@@ -319,19 +320,46 @@ export function useVideoPlayer({
     const onWaiting = () => setPlayback((p) => ({ ...p, waiting: true }));
 
     const onPlaying = () => {
-      window.parent.postMessage({ type: "VIDEO_PLAY" }, "*");
+      if (isEmbedded) {
+        window.parent.postMessage(
+          {
+            type: "VIDEO_PLAY",
+            payload: {
+              progressKey,
+            },
+          },
+          "*",
+        );
+      }
       setPlayback((p) => ({ ...p, waiting: false, playing: true }));
     };
     const onPause = () => {
-      window.parent.postMessage({ type: "VIDEO_PAUSE" }, "*");
+      if (isEmbedded) {
+        window.parent.postMessage(
+          {
+            type: "VIDEO_PAUSE",
+            payload: {
+              progressKey,
+            },
+          },
+          "*",
+        );
+      }
       setPlayback((p) => ({ ...p, playing: false }));
     };
 
     const onEnded = () => {
-      window.parent.postMessage(
-        { type: "VIDEO_ENDED", payload: { progressKey } },
-        "*",
-      );
+      if (isEmbedded) {
+        window.parent.postMessage(
+          {
+            type: "VIDEO_ENDED",
+            payload: {
+              progressKey,
+            },
+          },
+          "*",
+        );
+      }
       if (enableSaveProgress) {
         // ← guard
         useVideoProgressStore.getState().clearProgress(progressKey);

@@ -4,12 +4,12 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Keyboard, Mousewheel } from "swiper/modules";
 import "swiper/css";
 import { useTvSeason } from "@/hooks/get-seasons";
-import { VideoOff, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Swiper as SwiperInstance } from "swiper";
 import { SeasonsType } from "@/hooks/tmdb-types";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { VideoOff } from "lucide-react";
 export default function Episodes({
   tmdbId,
   season,
@@ -85,38 +85,73 @@ export default function Episodes({
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 45, stiffness: 420 }}
           >
-            {isLoading ? null : data?.episodes.length === 0 ? (
-              <NoEpisodesFound />
-            ) : data?.episodes.length ? (
-              <Swiper
-                key={selectSeason}
-                modules={[Mousewheel, Keyboard]}
-                direction="vertical"
-                slidesPerView="auto"
-                centeredSlides
-                initialSlide={defaultIndex}
-                mousewheel={{
-                  sensitivity: 1,
-                  thresholdDelta: 10,
-                  forceToAxis: true,
-                }}
-                onSwiper={(swiper) => {
-                  swiperRef.current = swiper;
-                  setVisualIndex(swiper.activeIndex);
-                }}
-                onSlideChange={(swiper) => {
-                  setVisualIndex(swiper.activeIndex);
-                }}
-                keyboard={{ enabled: true, onlyInViewport: true }}
-                className="absolute h-full overflow-visible! pointer-events-auto"
-                style={
-                  {
-                    "--swiper-wrapper-transition-timing-function":
-                      "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-                  } as React.CSSProperties
-                }
-              >
-                {data.episodes.map((e, i) => {
+            <Swiper
+              key={selectSeason}
+              modules={[Mousewheel, Keyboard]}
+              direction="vertical"
+              slidesPerView="auto"
+              centeredSlides
+              initialSlide={isLoading ? 2 : defaultIndex}
+              mousewheel={{
+                sensitivity: 1,
+                thresholdDelta: 10,
+                forceToAxis: true,
+              }}
+              onSwiper={(swiper) => {
+                swiperRef.current = swiper;
+                setVisualIndex(swiper.activeIndex);
+              }}
+              onSlideChange={(swiper) => {
+                setVisualIndex(swiper.activeIndex);
+              }}
+              keyboard={{ enabled: true, onlyInViewport: true }}
+              className="absolute h-full overflow-visible! pointer-events-auto"
+              style={
+                {
+                  "--swiper-wrapper-transition-timing-function":
+                    "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+                } as React.CSSProperties
+              }
+            >
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <SwiperSlide key={i} className="w-auto! h-auto!">
+                    <div
+                      className={cn(
+                        "aspect-video lg:w-md md:w-sm w-60 rounded-lg overflow-hidden animate-pulse bg-neutral-900",
+                        i === 2 && "scale-100",
+                        i === 1 &&
+                          "md:translate-y-20 translate-y-10 translate-x-5 scale-85",
+                        i === 3 &&
+                          "md:-translate-y-20 -translate-y-10 translate-x-5 scale-85",
+                        i === 0 &&
+                          "md:translate-y-40 translate-y-20 translate-x-10 scale-80",
+                        i === 4 &&
+                          "md:-translate-y-40 -translate-y-20 translate-x-10 scale-80",
+                      )}
+                    >
+                      <div className="w-full h-full bg-neutral-800" />
+                    </div>
+                  </SwiperSlide>
+                ))
+              ) : data?.episodes.length === 0 ? (
+                <SwiperSlide className="w-auto! h-auto!">
+                  <div className="aspect-video lg:w-md md:w-sm w-60 rounded-lg overflow-hidden bg-background border border-white/10 flex flex-col items-center justify-center text-center p-6">
+                    <div className="flex items-center justify-center size-14 rounded-full bg-white/5 mb-4">
+                      <VideoOff className="size-7 text-white/40" />
+                    </div>
+
+                    <h2 className="text-lg font-semibold text-white">
+                      No Episodes Found
+                    </h2>
+
+                    <p className="mt-2 text-sm text-white/50 max-w-xs">
+                      This season doesn't have any available episodes yet.
+                    </p>
+                  </div>
+                </SwiperSlide>
+              ) : (
+                data?.episodes.map((e, i) => {
                   const distance = i - visualIndex;
 
                   const isActive = distance === 0;
@@ -226,28 +261,12 @@ export default function Episodes({
                       </Link>
                     </SwiperSlide>
                   );
-                })}
-              </Swiper>
-            ) : null}
+                })
+              )}
+            </Swiper>
           </motion.div>
         </>
       )}
     </AnimatePresence>
-  );
-}
-
-function NoEpisodesFound() {
-  return (
-    <div className="flex flex-col items-center justify-center gap-3 py-8 px-4 w-full min-h-[140px] text-center">
-      <div className="flex items-center justify-center size-12 rounded-full bg-white/5">
-        <VideoOff className="size-5 text-white/30" />
-      </div>
-      <div className="space-y-1">
-        <p className="text-sm font-medium text-white/60">No episodes found</p>
-        <p className="text-xs text-white/30">
-          This season doesn't have any episodes yet.
-        </p>
-      </div>
-    </div>
   );
 }
