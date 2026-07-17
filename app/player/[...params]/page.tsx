@@ -333,19 +333,6 @@ export default function Player() {
   }, [source?.fallback, playback.canPlay]);
 
   useEffect(() => {
-    console.log("=== Sandbox Test ===");
-    console.log("isIframe:", window.self !== window.top);
-    console.log("frameElement:", window.frameElement);
-
-    if (window.frameElement instanceof HTMLIFrameElement) {
-      console.log("sandbox:", window.frameElement.getAttribute("sandbox"));
-      console.log("has sandbox:", window.frameElement.hasAttribute("sandbox"));
-    } else {
-      console.log("frameElement is NOT an HTMLIFrameElement");
-    }
-  }, []);
-
-  useEffect(() => {
     if (!playback.canPlay) return;
     if (fetchServer.server !== "icarus") return;
     if (playCountCalled.current) return;
@@ -474,6 +461,34 @@ export default function Player() {
     enabled: !(isPartner || meow),
     platform: "profiton",
   });
+  useEffect(() => {
+    const restricted = isRestrictedEmbed();
+
+    console.table({
+      restricted,
+      iframe: window.self !== window.top,
+      fullscreen: document.fullscreenEnabled,
+      storage: (() => {
+        try {
+          localStorage.setItem("__t", "1");
+          localStorage.removeItem("__t");
+          return true;
+        } catch {
+          return false;
+        }
+      })(),
+      parentAccess: (() => {
+        try {
+          void window.parent.document;
+          return true;
+        } catch {
+          return false;
+        }
+      })(),
+    });
+
+    setIsSandboxed(restricted);
+  }, []);
   useKeyboardControls({ controls, setDoubleTapSide });
   // useEffect(() => {
   //   // If not in an iframe, mark as checked immediately (no sandbox to worry about)
@@ -917,4 +932,41 @@ export default function Player() {
       </AnimatePresence>
     </div>
   );
+}
+export function isRestrictedEmbed() {
+  if (window.self === window.top) return false;
+
+  let score = 0;
+
+  let storage = true;
+  let fullscreen = document.fullscreenEnabled;
+  let parentAccess = true;
+
+  try {
+    localStorage.setItem("__t", "1");
+    localStorage.removeItem("__t");
+  } catch {
+    storage = false;
+    score++;
+  }
+
+  if (!fullscreen) {
+    score++;
+  }
+
+  try {
+    void window.parent.document;
+  } catch {
+    parentAccess = false;
+    score++;
+  }
+
+  console.table({
+    score,
+    storage,
+    fullscreen,
+    parentAccess,
+  });
+
+  return score >= 2;
 }
