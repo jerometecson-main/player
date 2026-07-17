@@ -66,7 +66,7 @@ export default function Player() {
   const playCountCalled = useRef(false);
   const errorReportCalled = useRef(false);
 
-  const isSandboxed = useSandboxDetection();
+  const { isSandboxed, isLoading } = useSandboxDetection();
   // ─── Local State ─────────────────────────────────────────────────────────────
   const isMobile = useIsMobile();
   const [doubleTapSide, setDoubleTapSide] = useState<"left" | "right" | null>(
@@ -171,7 +171,13 @@ export default function Player() {
     title,
     year,
     date: String(date),
-    enable: !allFailed && !!tmdbId && !!metadata && !!title,
+    enable:
+      !isLoading &&
+      !isSandboxed &&
+      !allFailed &&
+      !!tmdbId &&
+      !!metadata &&
+      !!title,
     dubCode: dub || dubLang,
     dubType: dub || dubLang ? (dub ? type : dubType) : "",
   });
