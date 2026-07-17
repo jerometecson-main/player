@@ -2,11 +2,15 @@
 
 import { useEffect, useState } from "react";
 
-export function useSandboxDetection() {
+export function useSandboxDetection(enabled = false) {
   const [isSandboxed, setIsSandboxed] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (!enabled) {
+      setIsLoading(false);
+      return;
+    }
     if (window.self === window.top) {
       setIsLoading(false);
       return;
@@ -21,7 +25,7 @@ export function useSandboxDetection() {
     }
 
     setIsLoading(false);
-  }, []);
+  }, [enabled]);
 
   return {
     isSandboxed,
