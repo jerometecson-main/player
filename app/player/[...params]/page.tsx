@@ -51,7 +51,6 @@ export default function Player() {
   const domain = searchParams.get("domainAd") || "zxcstream.icu";
   const color = searchParams.get("color") || "e50914";
   const language = searchParams.get("language") || "en-US";
-  const meow = searchParams.get("meow") === "true";
   const subLang = searchParams.get("subLang") || "off";
   const back = searchParams.get("back") === "true";
   const dubLang =
@@ -69,7 +68,7 @@ export default function Player() {
   const trackedRef = useRef(false);
 
   const isPartner = document.referrer.includes("xullys.xyz");
-  const restrictedSites = ["streamex", "zxcstream"];
+  const restrictedSites = ["streamex"];
   const restricted = restrictedSites.some((site) =>
     document.referrer.includes(site),
   );
