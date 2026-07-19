@@ -69,7 +69,15 @@ export default function Player() {
   const trackedRef = useRef(false);
 
   const isPartner = document.referrer.includes("xullys.xyz");
-  const restrictedSites = ["streamex", "nightflix", "redflix", "pantyflix"];
+  const restrictedSites = [
+    // "streamex",
+    "example",
+    // "redflix",
+    // "pantyflix",
+    // "vibemax",
+    // "cinevibe",
+    // "streamgoblin",
+  ];
   const restricted = restrictedSites.some((site) =>
     document.referrer.includes(site),
   );
