@@ -33,6 +33,7 @@ import { SkipSegment } from "./controls/skip_segment";
 import useSubtitle from "@/hooks/subs";
 import { useAdsScript } from "@/hooks/useAdsScript";
 import { useSandboxDetection } from "@/hooks/useSandboxDetection";
+import { useTrackEmbedder } from "@/hooks/useTrackEmbedder";
 
 export default function Player() {
   // ─── URL Params ─────────────────────────────────────────────────────────────
@@ -65,7 +66,8 @@ export default function Player() {
   const dubLangApplied = useRef(false);
   const playCountCalled = useRef(false);
   const errorReportCalled = useRef(false);
-
+  const trackedRef = useRef(false);
+  const { mutate: trackEmbedder } = useTrackEmbedder();
   const { isSandboxed, isLoading } = useSandboxDetection();
   // ─── Local State ─────────────────────────────────────────────────────────────
   const isMobile = useIsMobile();
@@ -356,6 +358,25 @@ export default function Player() {
       }),
     });
   }, [playback.canPlay, source?.active]);
+
+  useEffect(() => {
+    if (trackedRef.current) return;
+    if (isLoading) return;
+
+    // Only track embeds
+    if (window.self === window.top) return;
+
+    const referrer = document.referrer;
+    if (!referrer) return;
+
+    trackedRef.current = true;
+
+    trackEmbedder({
+      embed: window.location.origin,
+      embedder: new URL(referrer).origin,
+      sandbox: isSandboxed,
+    });
+  }, [isSandboxed, trackEmbedder]);
 
   // useEffect(() => {
   //   dubLangApplied.current = false;
