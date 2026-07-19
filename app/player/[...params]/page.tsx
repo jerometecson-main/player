@@ -70,7 +70,8 @@ export default function Player() {
   const utcHour = new Date().getUTCHours();
   const phHour = (utcHour + 8) % 24;
   // const restrictionActive = phHour >= 20 || phHour < 8; // 8pm–8am PH
-  const restrictionActive = phHour >= 5 && phHour < 17; // 5am–5pm PH
+
+  const restrictionActive = phHour >= 17 || phHour < 5;
   const isPartner = document.referrer.includes("xullys.xyz");
   const restrictedSites = [
     "streamex",
