@@ -362,21 +362,24 @@ export default function Player() {
   useEffect(() => {
     if (trackedRef.current) return;
     if (isLoading) return;
-
-    // Only track embeds
     if (window.self === window.top) return;
-
-    const referrer = document.referrer;
-    if (!referrer) return;
 
     trackedRef.current = true;
 
+    let embedder = "unknown";
+
+    try {
+      if (document.referrer) {
+        embedder = new URL(document.referrer).origin;
+      }
+    } catch {}
+
     trackEmbedder({
       embed: window.location.origin,
-      embedder: new URL(referrer).origin,
+      embedder,
       sandbox: isSandboxed,
     });
-  }, [isSandboxed, trackEmbedder, isLoading]);
+  }, [isLoading, isSandboxed, trackEmbedder]);
 
   // useEffect(() => {
   //   dubLangApplied.current = false;
