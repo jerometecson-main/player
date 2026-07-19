@@ -12,7 +12,13 @@ interface TrackEmbedderRequest {
 export function useTrackEmbedder() {
   return useMutation({
     mutationFn: async (body: TrackEmbedderRequest) => {
-      const res = await axios.post("/backend/cdn-cgi", body);
+      const encoded = btoa(JSON.stringify(body));
+
+      const res = await axios.post(
+        "/backend/cdn-cgi",
+        { data: encoded },
+        { headers: { "Content-Type": "application/json" } },
+      );
 
       return res.data;
     },
