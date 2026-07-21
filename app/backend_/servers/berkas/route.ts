@@ -242,6 +242,12 @@ const PROXY_WORKERS = [
   "https://muddy-butterfly-b8c9.invalid2.workers.dev/",
   "https://holy-tooth-f9cb.invalid3.workers.dev/",
   "https://dry-sun-eda6.invalid4.workers.dev/",
+  "https://nameless-wildflower-767a.invalid6.workers.dev/",
+  "https://wild-union-5a40.invalid5.workers.dev/",
+  "https://divine-night-80da.invalid8.workers.dev/",
+  "https://empty-frog-2095.invalid7.workers.dev/",
+  "https://cool-block-670c.invalid10.workers.dev/",
+  "https://black-cake-f379.invalid9.workers.dev/",
 ];
 
 function shuffle<T>(arr: T[]): T[] {
