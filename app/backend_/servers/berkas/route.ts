@@ -218,6 +218,8 @@ const PROXY_WORKERS = [
   "https://berkas.test02-663.workers.dev/",
   // "https://berkas.test03-4fb.workers.dev/",
   // "https://berkas.test04-cee.workers.dev/",
+  "https://rapid-rain-5111.berkas002.workers.dev/",
+  "https://dry-unit-59a0.berkas001.workers.dev/",
 ];
 
 function shuffle<T>(arr: T[]): T[] {
