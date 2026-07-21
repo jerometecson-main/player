@@ -98,15 +98,21 @@ function getRandomAfricanIP() {
   return `${base[0]}.${base[1]}.${rand()}.${rand()}`;
 }
 
-export async function getWorkingProxy(url: string, proxies: string[]) {
+export async function getWorkingProxy(
+  url: string,
+  proxies: string[],
+  origin: string,
+) {
   const activeProxies = await getActiveProxies(proxies);
   const shuffledProxies = shuffle(activeProxies);
+
   if (!shuffledProxies.length) return null;
   const encrypted = await encryptUrl(url);
   for (const proxy of shuffledProxies) {
     try {
+      const proxyUrl = `${origin}${proxy}?data=${encodeURIComponent(encrypted)}`;
       const res = await fetchWithTimeout(
-        `${proxy}?data=${encodeURIComponent(encrypted)}`,
+        proxyUrl,
         { method: "HEAD", headers: { Range: "bytes=0-1" } },
         3000,
       );
@@ -115,7 +121,7 @@ export async function getWorkingProxy(url: string, proxies: string[]) {
       //   continue;
       // }
       if (res.ok) {
-        return proxy;
+        return `${origin}${proxy}`;
       }
     } catch (e: any) {
       // console.log(`[PROXY] ✗ ${proxy} | ${e?.message}`);
@@ -134,7 +140,7 @@ export async function GET(req: NextRequest) {
       `[ICARUS] ${tmdbId}/${mediaType}${extra} | ${status} | ${reason}`,
     );
   };
-
+  const origin = req.nextUrl.origin;
   try {
     const tmdbId = req.nextUrl.searchParams.get(FIELD_MAP.id);
     const mediaType = req.nextUrl.searchParams.get("b");
@@ -622,9 +628,13 @@ export async function GET(req: NextRequest) {
       // "https://icy-frost-2f13.icarus053.workers.dev/",
       // "https://long-meadow-047f.vps9-9ce.workers.dev/",
       // "https://cool-bonus-53bc.vps10-af1.workers.dev/",
-      "https://v-zxc-stream-xyz.up.railway.app/backend_/servers/icarus/proxy",
+      "/backend_/servers/icarus/proxy",
     ];
-    const workingProxy = await getWorkingProxy(sortedDownloads[0].url, proxies);
+    const workingProxy = await getWorkingProxy(
+      sortedDownloads[0].url,
+      proxies,
+      origin,
+    );
     if (!workingProxy) {
       logRequest(502, "no working proxy");
       return NextResponse.json(
