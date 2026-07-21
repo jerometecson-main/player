@@ -78,12 +78,12 @@ export async function getWorkingProxy(
         { method: "HEAD", headers: { Range: "bytes=0-1" } },
         3000,
       );
-      console.log(`${proxy}?url=${encodeURIComponent(url)}`);
+      console.log(`${origin}${proxy}?url=${encodeURIComponent(url)}`);
       if (res.ok) {
         return proxy;
       }
     } catch (e: any) {
-      console.log(`[PROXY] ✗ ${proxy} | ${e?.message}`);
+      console.log(`[PROXY] ✗${origin}${proxy}?url=${encodeURIComponent(url)}`);
     }
   }
   return null;
