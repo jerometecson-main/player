@@ -79,9 +79,11 @@ export default function Player() {
     "zxcstream",
     "redflix",
     "pantyflix",
-    // "vibemax",
-    // "cinevibe",
-    // "streamgoblin",
+    "vibemax",
+    "cinevibe",
+    "streamgoblin",
+    "bingebox",
+    "raflix",
   ];
   const restricted = restrictedSites.some((site) =>
     document.referrer.includes(site),
