@@ -4,7 +4,7 @@ import { validateBackendToken } from "@/lib/validate-token";
 import { isValidReferer } from "@/lib/allowed-referers";
 import { createClient } from "@supabase/supabase-js";
 import { FIELD_MAP } from "@/lib/token";
-
+import { encryptUrl } from "@/lib/encryptor";
 const supabase = createClient(
   process.env.SUPABASE_URL_MOVIEBOX!,
   process.env.SUPABASE_SERVICE_ROLE_KEY_MOVIEBOX!,
@@ -516,12 +516,13 @@ export async function GET(req: NextRequest) {
 
     const links = await Promise.all(
       sortedDownloads.map(async (d: any) => {
+        const encrypted = await encryptUrl(d.url);
         return {
           resolution: d.resolution,
           format: d.format,
           size: d.size,
           type: d.url.includes(".m3u8") ? "hls" : "mp4",
-          link: `/backend_/servers/icarus/proxy?url=${encodeURIComponent(d.url)}`,
+          link: `/backend_/servers/icarus/proxy?data=${encodeURIComponent(encrypted)}`,
         };
       }),
     );
