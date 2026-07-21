@@ -461,7 +461,7 @@ export async function GET(req: NextRequest) {
     //Test155@zxcstream.xyz's Account
     const proxies = [
       //
-      "/backend_/servers/icarus/proxy/",
+      "https://v-zxc-stream-xyz.up.railway.app/backend_/servers/icarus/proxy/",
     ];
 
     if (!cachedDownloads) {
