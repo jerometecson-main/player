@@ -137,6 +137,17 @@ const HOLLY_WORKERS = [
   "https://nameless-paper-1bf8.orion0008.workers.dev/",
   "https://super-hat-bcbd.orion0009.workers.dev/",
   "https://old-fog-35b0.orion00010.workers.dev/",
+  //
+  "https://curly-field-b7ab.onlinesho1.workers.dev/",
+  "https://icy-glade-a2f9.onlineshop2-4fa.workers.dev/",
+  "https://misty-smoke-703c.onlineshop3.workers.dev/",
+  "https://steep-mode-f072.onlineshop4.workers.dev/",
+  "https://damp-tree-2a80.onlineshop5.workers.dev/",
+  "https://shy-glade-89f9.onlineshop6.workers.dev/",
+  "https://empty-glade-d144.onlineshop7.workers.dev/",
+  "https://orange-bush-746c.onlineshop8.workers.dev/",
+  "https://blue-morning-b0ed.onlineshop10.workers.dev/",
+  "https://cold-block-fb91.onlineshop9.workers.dev/",
 ];
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -264,11 +275,15 @@ export async function GET(req: NextRequest) {
                 : "default",
             type: source.type === "hls" ? "hls" : "mp4",
             link: `${worker}proxy?data=${encodeURIComponent(await encryptUrl(source.file))}&h=${encodeURIComponent(encryptedH)}`,
-            meow: true,
           })),
       );
       logRequest(200, "cache hit");
-      return NextResponse.json({ success: true, links, subtitles: [] });
+      return NextResponse.json({
+        success: true,
+        links,
+        subtitles: [],
+        meow: true,
+      });
     }
 
     // ─── STEP 1: Scrape ──────────────────────────────────────────────────────

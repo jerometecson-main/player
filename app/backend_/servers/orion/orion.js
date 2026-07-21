@@ -352,9 +352,9 @@ export default {
 
     return json({
       routes: {
-        "/scrape?slug=frankenstein-2025": "Holly scraper",
-        "/resolve?embed_url=https://...": "Goodstream resolver",
-        "/proxy?data=...&h=...": "HLS proxy",
+        "/s25": "Holly scraper",
+        "/rttps://...": "Goodstream resolver",
+        "/p&h=...": "HLS proxy",
       },
     });
   },
