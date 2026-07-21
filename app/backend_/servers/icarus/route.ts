@@ -98,7 +98,6 @@ function getRandomAfricanIP() {
   return `${base[0]}.${base[1]}.${rand()}.${rand()}`;
 }
 
-
 export async function GET(req: NextRequest) {
   const logRequest = (status: number, reason: string) => {
     const tmdbId = req.nextUrl.searchParams.get(FIELD_MAP.id);
@@ -494,8 +493,6 @@ export async function GET(req: NextRequest) {
       }
     } //Je@09185134757
 
-  
-
     if (!cachedDownloads) {
       await supabase.from("moviebox_downloads_cache").upsert(
         {
@@ -525,7 +522,7 @@ export async function GET(req: NextRequest) {
           format: d.format,
           size: d.size,
           type: d.url.includes(".m3u8") ? "hls" : "mp4",
-          link: `/backend_/servers/icarus/proxy?data=${encodeURIComponent(encrypted)}`,
+          link: `/backend_/servers/icarus/proxy?url=${encodeURIComponent(encrypted)}`,
         };
       }),
     );
