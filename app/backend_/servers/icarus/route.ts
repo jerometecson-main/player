@@ -116,10 +116,10 @@ export async function getWorkingProxy(
         { method: "HEAD", headers: { Range: "bytes=0-1" } },
         3000,
       );
-      // if (res.status === 429) {
-      //   await blacklistProxy(proxy);
-      //   continue;
-      // }
+      if (res.status === 429) {
+        await blacklistProxy(proxy);
+        continue;
+      }
       if (res.ok) {
         return `${origin}${proxy}`;
       }
