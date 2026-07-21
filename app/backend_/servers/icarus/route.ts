@@ -522,7 +522,7 @@ export async function GET(req: NextRequest) {
           format: d.format,
           size: d.size,
           type: d.url.includes(".m3u8") ? "hls" : "mp4",
-          link: `/backend_/servers/icarus/proxy?data=${encodeURIComponent(encrypted)}`,
+          link: `https://proxy.zxcstream.xyz/backend_/servers/icarus/proxy?data=${encodeURIComponent(encrypted)}`,
         };
       }),
     );
