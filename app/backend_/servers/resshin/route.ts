@@ -295,7 +295,7 @@ export async function GET(req: NextRequest) {
     const episode = req.nextUrl.searchParams.get(FIELD_MAP.episode);
     const extra = mediaType === "tv" ? `/${season}/${episode}` : "";
     console.log(
-      `[ICARUS] ${tmdbId}/${mediaType}${extra} | ${status} | ${reason}`,
+      `[RESSHIN] ${tmdbId}/${mediaType}${extra} | ${status} | ${reason}`,
     );
   };
 

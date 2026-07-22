@@ -72,23 +72,12 @@ export default function Player() {
   const restrictionActive = phHour >= 20 || phHour < 8; // 8pm–8am PH
 
   // const restrictionActive = phHour >= 17 || phHour < 5;
-  const isPartner = document.referrer.includes("xullys.xyz");
-  const restrictedSites = [
-    "streamex",
-    "nightflix",
-    "zxcstream",
-    "redflix",
-    "pantyflix",
-    "vibemax",
-    "cinevibe",
-    "streamgoblin",
-    "bingebox",
-    "raflix",
-    "ra-media",
-  ];
-  const restricted = restrictedSites.some((site) =>
-    document.referrer.includes(site),
-  );
+
+  const whitelistSites = ["zxcstream"];
+
+  const isWhitelisted =
+    window.self === window.top ||
+    whitelistSites.some((site) => document.referrer.includes(site));
   const { mutate: trackEmbedder } = useTrackEmbedder();
   const { isSandboxed, isLoading } = useSandboxDetection();
 
@@ -157,7 +146,7 @@ export default function Player() {
     language,
     // !isLoading && !isSandboxed,
     // !isLoading && !(restricted && isSandboxed),
-    !isLoading && !(restricted && isSandboxed && restrictionActive),
+    !isLoading && !(!isWhitelisted && isSandboxed && restrictionActive),
   );
 
   const imdbId = metadata?.imdb_id || null;
@@ -399,7 +388,7 @@ export default function Player() {
     }
 
     // Ignore sandboxed embeds
-    if (isSandboxed && restricted) return;
+    if (isSandboxed && !isWhitelisted) return;
 
     let embedder = "unknown";
 
@@ -515,7 +504,7 @@ export default function Player() {
   }, [mergeSubtitles.length]);
 
   useAdsScript({
-    enabled: !isPartner && metadataLoad,
+    enabled: metadataLoad,
     platform: "profiton",
   });
 
@@ -575,7 +564,7 @@ export default function Player() {
   if (isLoading) {
     return null;
   }
-  if (restricted && restrictionActive && isSandboxed) {
+  if (!isWhitelisted && restrictionActive && isSandboxed) {
     return (
       <div
         className={cn(
@@ -714,7 +703,6 @@ export default function Player() {
         "relative h-svh w-full overflow-hidden bg-black ",
         isVisible ? "" : "cursor-none",
       )}
-      onClick={isPartner ? triggerAd : undefined}
     >
       <AnimatePresence>
         {showFallbackBanner && (
