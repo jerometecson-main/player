@@ -312,8 +312,15 @@ export async function GET(req: NextRequest) {
     const season = req.nextUrl.searchParams.get(FIELD_MAP.season);
     const episode = req.nextUrl.searchParams.get(FIELD_MAP.episode);
     const extra = mediaType === "tv" ? `/${season}/${episode}` : "";
+
+    const ip =
+      req.headers.get("cf-connecting-ip") ||
+      req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+      req.headers.get("x-real-ip") ||
+      "unknown";
+
     console.log(
-      `[RESSHIN] ${tmdbId}/${mediaType}${extra} | ${status} | ${reason}`,
+      `[RESSHIN] ${tmdbId}/${mediaType}${extra} | ${status} | ${reason} | IP: ${ip}`,
     );
   };
 
