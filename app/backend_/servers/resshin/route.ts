@@ -309,6 +309,8 @@ export async function GET(req: NextRequest) {
     const ts = Number(req.nextUrl.searchParams.get(FIELD_MAP.ts));
     const token = req.nextUrl.searchParams.get(FIELD_MAP.token)!;
     const f_token = req.nextUrl.searchParams.get(FIELD_MAP.fToken)!;
+    const dubCode = req.nextUrl.searchParams.get("dubCode");
+    const dubType = Number(req.nextUrl.searchParams.get("dubType") ?? "0");
 
     if (!tmdbId || !mediaType || !title || !date || !ts || !token) {
       logRequest(404, "missing params");
@@ -366,17 +368,62 @@ export async function GET(req: NextRequest) {
     });
 
     const primary = matches[0] || filtered[0];
+    const subjectDetails = await gatewayGetSubject(primary.subjectId);
 
+    let dubs = subjectDetails?.data?.dubs ?? [];
+
+    if (!dubs.length) {
+      dubs = [
+        {
+          subjectId: primary.subjectId,
+          lanCode: "orig",
+          lanName: "Original Audio",
+          original: true,
+          type: 0,
+        },
+      ];
+    }
+    const original =
+      dubs.find((d: any) => d.original) ??
+      dubs.find((d: any) => d.lanCode === "en") ??
+      dubs[0];
+
+    let activeDub = original;
+
+    if (dubCode) {
+      const found = dubs.find(
+        (d: any) => d.lanCode === dubCode && Number(d.type ?? 0) === dubType,
+      );
+
+      if (found) {
+        activeDub = found;
+      }
+    }
     const baseQuery: Record<string, string> =
       mediaType === "tv"
         ? { se: (season || "1").toString(), ep: (episode || "1").toString() }
         : {};
 
-    const qualities = await fetchSubjectQualities(
-      { subjectId: primary.subjectId },
+    let qualities = await fetchSubjectQualities(
+      {
+        subjectId: activeDub.subjectId,
+      },
       baseQuery,
     );
+    let fallback = false;
 
+    if (!qualities.length && activeDub.subjectId !== original.subjectId) {
+      fallback = true;
+
+      activeDub = original;
+
+      qualities = await fetchSubjectQualities(
+        {
+          subjectId: original.subjectId,
+        },
+        baseQuery,
+      );
+    }
     logRequest(200, "OK");
     return NextResponse.json({
       success: true,
@@ -388,8 +435,25 @@ export async function GET(req: NextRequest) {
         link: q.url, // DIRECT LINK
       })),
       subtitles: [],
-      dubs: [],
-      active: { langCode: "orig", langName: "Original" },
+      dubs: dubs.map((d: any) => ({
+        lang: d.lanCode,
+        type: d.type,
+        name:
+          d.type === 1
+            ? d.lanName
+                .replace(/\b(dub|audio)\b/gi, "")
+                .trim()
+                .replace(/sub$/i, "")
+                .trim() + " (Subtitle)"
+            : d.lanName.replace(/\b(dub|audio|sub)\b/gi, "").trim(),
+        original: d.original,
+      })),
+      active: {
+        langCode: activeDub.lanCode,
+        langType: activeDub.type,
+        langName: activeDub.lanName,
+      },
+      fallback,
     });
   } catch (err: any) {
     logRequest(500, err.message);

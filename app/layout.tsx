@@ -28,25 +28,24 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "StreamBox — Stream & Download",
+  title: "ZXC[STREAM] — Stream & Download",
   description: "Stream or download movies and TV by TMDB ID.",
-  applicationName: "StreamBox",
-  authors: [{ name: "StreamBox" }],
+  applicationName: "ZXC[STREAM]",
+  authors: [{ name: "ZXC[STREAM]" }],
   referrer: "no-referrer",
 
   openGraph: {
-    title: "StreamBox",
+    title: "ZXC[STREAM]",
     description: "Stream or download movies and TV by TMDB ID.",
     type: "website",
   },
 
   twitter: {
     card: "summary",
-    title: "StreamBox",
+    title: "ZXC[STREAM]",
     description: "Stream or download movies and TV by TMDB ID.",
   },
 };
-
 export default function RootLayout({
   children,
 }: Readonly<{

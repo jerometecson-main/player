@@ -40,14 +40,6 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const referer = req.headers.get("referer") || "";
-    if (!isValidReferer(referer)) {
-      return NextResponse.json(
-        { success: false, error: "Forbidden" },
-        { status: 403 },
-      );
-    }
-
     const { data } = await supabaseSubtitle
       .from("moviebox_subtitles_cache")
       .select("subtitles")
