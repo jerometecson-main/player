@@ -1,6 +1,6 @@
+//RESSHIN SERVER
 import { NextRequest, NextResponse } from "next/server";
 import { validateBackendToken } from "@/lib/validate-token";
-import { isValidReferer } from "@/lib/allowed-referers";
 import { FIELD_MAP } from "@/lib/token";
 import crypto from "node:crypto";
 
@@ -236,7 +236,13 @@ async function gatewayGetResource(
   subjectId: string,
   query: Record<string, string> = {},
 ) {
-  const params = { all: "0", page: "1", perPage: "5", ...query, subjectId };
+  const params = {
+    ...query,
+    all: query.all ?? "0",
+    page: query.page ?? "1",
+    perPage: query.perPage ?? "5",
+    subjectId,
+  };
   const qs = new URLSearchParams(params).toString();
   return gatewayRequest(
     "GET",
@@ -401,7 +407,18 @@ export async function GET(req: NextRequest) {
     }
     const baseQuery: Record<string, string> =
       mediaType === "tv"
-        ? { se: (season || "1").toString(), ep: (episode || "1").toString() }
+        ? {
+            all: "0",
+            page: "1",
+            perPage: "5",
+            se: String(season || 1),
+            ep: String(episode || 1),
+            epFrom: String(episode || 1),
+            epTo: String(episode || 1),
+            startPosition: String(episode || 1),
+            endPosition: String(episode || 1),
+            pagerMode: "2",
+          }
         : {};
 
     let qualities = await fetchSubjectQualities(
