@@ -192,6 +192,12 @@ const HOLLY_WORKERS = [
   "https://dawn-surf-3fd4.cabbag16.workers.dev/",
   "https://rapid-mountain-88b5.cabbage17.workers.dev/",
   "https://summer-sunset-baa7.cabbage18.workers.dev/",
+  "https://nameless-darkness-6726.cabbage20.workers.dev/",
+  "https://dawn-flower-62aa.cabbage19.workers.dev/",
+  "https://weathered-bar-2ae0.carrot1.workers.dev/",
+  "https://little-bird-702a.carrot2.workers.dev/",
+  "https://round-wave-420a.carrot4.workers.dev/",
+  "https://soft-tree-cf19.carrot3.workers.dev/",
 ];
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];

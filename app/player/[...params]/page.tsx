@@ -501,7 +501,7 @@ export default function Player() {
 
   useAdsScript({
     enabled: metadataLoad,
-    platform: "profiton",
+    platform: "adsterra",
   });
 
   useKeyboardControls({ controls, setDoubleTapSide });
