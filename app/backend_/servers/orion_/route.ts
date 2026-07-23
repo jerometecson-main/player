@@ -149,6 +149,12 @@ const HOLLY_WORKERS = [
   "https://blue-morning-b0ed.onlineshop10.workers.dev/",
   "https://cold-block-fb91.onlineshop9.workers.dev/",
   "https://wild-limit-4cdd.onion-468.workers.dev/",
+  "https://shiny-feather-61d5.onion2.workers.dev/",
+  "https://dark-cherry-6a91.onion1-15b.workers.dev/",
+  "https://proud-cell-5939.onion3.workers.dev/",
+  "https://tiny-recipe-0260.onion4.workers.dev/",
+  "https://little-river-b101.onion5.workers.dev/",
+  "https://silent-bonus-7a24.onion6.workers.dev/",
 ];
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
