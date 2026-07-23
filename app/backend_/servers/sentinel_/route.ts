@@ -276,7 +276,7 @@ export async function GET(req: NextRequest) {
             links,
             subtitles,
             refreshed_at: new Date().toISOString(),
-            expires_at: new Date(Date.now() + 1000 * 60 * 60 * 3).toISOString(),
+            expires_at: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
           },
           {
             onConflict: "tmdb_id,media_type,season,episode",
