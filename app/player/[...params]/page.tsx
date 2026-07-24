@@ -34,7 +34,33 @@ import { useAdsScript } from "@/hooks/useAdsScript";
 import { useSandboxDetection } from "@/hooks/useSandboxDetection";
 import { useTrackEmbedder } from "@/hooks/useTrackEmbedder";
 import Link from "next/link";
+function getRootDomain(url: string) {
+  try {
+    const hostname = new URL(url).hostname;
 
+    // localhost / IP addresses
+    if (hostname === "localhost" || /^\d+\.\d+\.\d+\.\d+$/.test(hostname)) {
+      return hostname;
+    }
+
+    const parts = hostname.split(".");
+
+    // Handles common ccTLDs like example.co.uk
+    const secondLevel = ["co", "com", "net", "org", "gov", "edu", "ac"];
+
+    if (
+      parts.length >= 3 &&
+      parts[parts.length - 1].length === 2 &&
+      secondLevel.includes(parts[parts.length - 2])
+    ) {
+      return parts.slice(-3).join(".");
+    }
+
+    return parts.slice(-2).join(".");
+  } catch {
+    return url;
+  }
+}
 export default function Player() {
   // ─── URL Params ─────────────────────────────────────────────────────────────
 
@@ -376,7 +402,7 @@ export default function Player() {
     // Direct visit
     if (window.self === window.top) {
       trackEmbedder({
-        embed: window.location.origin,
+        embed: getRootDomain(window.location.origin),
         embedder: "direct",
         sandbox: false,
       });
@@ -390,12 +416,12 @@ export default function Player() {
 
     try {
       if (document.referrer) {
-        embedder = new URL(document.referrer).origin;
+        embedder = getRootDomain(document.referrer);
       }
     } catch {}
 
     trackEmbedder({
-      embed: window.location.origin,
+      embed: getRootDomain(window.location.origin),
       embedder,
       sandbox: isSandboxed,
     });
