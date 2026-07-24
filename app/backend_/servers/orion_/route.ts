@@ -216,6 +216,8 @@ const HOLLY_WORKERS = [
   "https://quiet-paper-8f9c.carrot19.workers.dev/",
   "https://sparkling-sun-6be0.eggplant2.workers.dev/",
   "https://calm-cake-38bb.eggplant1.workers.dev/",
+  "https://plain-boat-ff0f.eggplant4.workers.dev/",
+  "https://aged-mode-1015.eggplant3.workers.dev/",
 ];
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
