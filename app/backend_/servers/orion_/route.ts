@@ -218,6 +218,14 @@ const HOLLY_WORKERS = [
   "https://calm-cake-38bb.eggplant1.workers.dev/",
   "https://plain-boat-ff0f.eggplant4.workers.dev/",
   "https://aged-mode-1015.eggplant3.workers.dev/",
+  "https://morning-mud-1c64.eggplant6.workers.dev/",
+  "https://winter-sky-d6cf.eggplant5.workers.dev/",
+  "https://broken-paper-de7d.eggplant8.workers.dev/",
+  "https://empty-mouse-d0c0.eggplant7.workers.dev/",
+  "https://calm-leaf-e4aa.eggplant9.workers.dev/",
+  "https://orange-meadow-1144.eggplant10.workers.dev/",
+  "https://plain-forest-d989.eggplant11.workers.dev/",
+  "https://still-wind-8eae.eggplant12.workers.dev/",
 ];
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
